@@ -4,6 +4,13 @@ This is a repo to track the progress of "depviz", a tool to visualize dependenci
 
 This started as this discussion: https://github.com/jbenet/random-ideas/issues/37 -- see that thread for details on this. For now this repo is only mockups.
 
+## Looking for Implementors!
+
+This is a tool I do not have time to create fully, but need very much for [the IPFS project](https://github.com/ipfs/ipfs) and other open source in general. If you are also interested in this, please help out!
+
+If you have shipped open source software and/or UX-heavy web apps before, please help! I am also willing to pay for this work to have it done very soon (can do a contracting gig).
+
+
 ## Mockups
 
 #### [depviz.mocks.pdf](./mocks/depviz.mocks.pdf)
