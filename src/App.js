@@ -19,7 +19,8 @@ class App extends Component {
           <DepCard
             cx={40} cy={30}
             host="github"
-            title="Foo Bar"
+            title="jbenet/depviz#1"
+            href="https://github.com/jbenet/depviz/issues/1"
             dependencies={5}
             related={1}
             dependents={20}

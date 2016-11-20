@@ -31,11 +31,13 @@ class DepCard extends Component {
           xlinkHref={logo}>
         </image>
       </a>
-      <text
-        x={this.props.cx - width/2 + 0.5 + height}
-        y={this.props.cy - height/2 + 1.5}>
-        {this.props.title}
-      </text>
+      <a xlinkHref={this.props.href}>
+        <text
+          x={this.props.cx - width/2 + 0.5 + height}
+          y={this.props.cy - height/2 + 1.5}>
+          {this.props.title}
+        </text>
+      </a>
       <DepIndicators
         cx={this.props.cx + width/2} cy={this.props.cy} dy={height/2}
         dependencies={this.props.dependencies}
