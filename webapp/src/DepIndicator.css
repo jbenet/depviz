@@ -1,12 +1,23 @@
 .DepIndicator {
   border-radius: 50%;
+  color: white;
+  background-color: gray;
+}
+
+.ExpanedDepCard .DepIndicator {
   width: 30px;
   height: 30px;
   line-height: 30px;
-  font-family: "Helvetica Neue";
+  font-size: 16px;
   font-weight: bold;
-  color: white;
-  background-color: gray;
+}
+
+.CollapsedDepCard .DepIndicator {
+  width: 26px;
+  height: 26px;
+  line-height: 26px;
+  font-size: 13px;
+  font-weight: normal;
 }
 
 .DepIndicator.DepState-0 {

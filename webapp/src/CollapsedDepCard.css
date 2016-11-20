@@ -1,8 +1,8 @@
 .CollapsedDepCard {
   margin: 50px;
   position: relative;
-  width: 225px;
-  height: 50px;
+  width: 175px;
+  height: 40px;
   border: solid 2px gray;
   font-family: "Helvetica Neue";
 }
@@ -20,17 +20,26 @@
 }
 
 
+.CollapsedDepCard .CardProgressBar {
+  position: absolute;
+  top: 0px;
+  bottom: 0px;
+  left: 0px;
+  z-index: -1;
+  background-color: rgba(0, 255, 0, 0.2);
+}
+
 .CollapsedDepCard-text {
   width: 100%;
   height: 100%;
-  line-height: 46px;
+  line-height: 36px;
 }
 
 .CollapsedDepCard-text > span {
   display: inline-block;
   vertical-align: middle;
   line-height: normal;
-  font-size: 18px;
+  font-size: 14px;
   font-weight: bold;
 }
 
@@ -43,16 +52,16 @@
 
 .CollapsedDepCard-indicators :nth-child(1) {
   position: absolute;
-  top: -15px;
+  top: -13px;
 }
 
 .CollapsedDepCard-indicators :nth-child(2) {
   position: absolute;
-  top: 10px;
-  left: 10px;
+  top: 7px;
+  left: 8px;
 }
 
 .CollapsedDepCard-indicators :nth-child(3) {
   position: absolute;
-  bottom: -15px;
+  bottom: -13px;
 }

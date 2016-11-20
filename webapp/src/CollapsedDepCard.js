@@ -12,10 +12,9 @@ class CollapsedDepCard extends Component {
     let di1 = <DepIndicator count={item.dependencies} state={DepStateReady(item)} />
     let di2 = <DepIndicator count={item.related} />
     let di3 = <DepIndicator count={item.dependents} state={DepStateDone(item)} />
+    console.log(item.progress.percent())
     return (
       <div className={"CollapsedDepCard DepState-" + DepStateDone(item)}>
-        <div className="CardProgressBar">
-        </div>
         <div className="CollapsedDepCard-text">
           <span>{item.id}</span>
         </div>
@@ -23,6 +22,8 @@ class CollapsedDepCard extends Component {
           {di1}
           {di2}
           {di3}
+        </div>
+        <div className="CardProgressBar" style={{width: item.progress.percent() +"%"}}>
         </div>
       </div>
     );
