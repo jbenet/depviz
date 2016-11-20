@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import github from './logo/github.svg';
-import { Neutral } from './Color';
+import { Red, Green, Neutral } from './Color';
 import DepIndicators from './DepIndicators';
 
 class DepCard extends Component {
@@ -10,8 +10,9 @@ class DepCard extends Component {
     var color = Neutral;
     var style = {
       fill: color,
-      opacity: '0.1',
-      strokeWidth: 0,
+      fillOpacity: '0.1',
+      stroke: this.props.done ? Green : Red,
+      strokeWidth: 0.2,
     };
     var logo = github;
     var host = 'https://github.com';
