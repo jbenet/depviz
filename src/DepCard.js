@@ -44,6 +44,7 @@ class DepCard extends Component {
       </a>
       <DepIndicators
         cx={this.props.cx + width/2} cy={this.props.cy} dy={height/2}
+        blockers={this.props.blockers}
         dependencies={this.props.dependencies}
         related={this.props.related}
         dependents={this.props.dependents}
