@@ -1,0 +1,22 @@
+.DepIndicator {
+  border-radius: 50%;
+  width: 30px;
+  height: 30px;
+  line-height: 30px;
+  font-family: "Helvetica Neue";
+  font-weight: bold;
+  color: white;
+  background-color: gray;
+}
+
+.DepIndicator.DepState-0 {
+  background-color: gray;
+}
+
+.DepIndicator.DepState-1 {
+  background-color: red;
+}
+
+.DepIndicator.DepState-2 {
+  background-color: green;
+}
