@@ -1,5 +1,7 @@
 import React, { Component } from 'react';
 import DepCard from './DepCard';
+import Viz from 'viz.js';
+import xml2js from 'xml2js';
 
 class DepGraph extends Component {
   cards() {
@@ -109,37 +111,75 @@ class DepGraph extends Component {
       done={card.done} />
   }
 
-  positionCards(cards) { /* FIXME: graphviz */
-    /* center colum */
-    cards['github/gviz/gviz-d3#32'].cx = 40;
-    cards['github/gviz/gviz-d3#32'].cy = 5;
-    cards['github/jbenet/depviz#3'].cx = 40;
-    cards['github/jbenet/depviz#3'].cy = 15;
-    cards['github/jbenet/depviz#10'].cx = 40;
-    cards['github/jbenet/depviz#10'].cy = 25;
-    cards['github/jbenet/depviz#1'].cx = 40;
-    cards['github/jbenet/depviz#1'].cy = 35;
+  graphvizName(key) {
+    return key.replace(/[^a-zA-Z0-9_]/g, '_');
+  }
 
-    /* left colum */
-    cards['github/jbenet/depviz#2'].cx = 20;
-    cards['github/jbenet/depviz#2'].cy = 5;
-    cards['github/jbenet/depviz#5'].cx = 20;
-    cards['github/jbenet/depviz#5'].cy = 20;
+  graphviz(cards) {
+    var gv = [
+      'digraph {',
+      '  node [shape=box];',
+    ];
+    var key, card, name;
+    for (key in cards) {
+      if (true) {
+        card = cards[key];
+        name = this.graphvizName(key);
+        gv.push('  node [href=' + name + '] ' + name + ';');
+      }
+    }
+    for (key in cards) {
+      if (true) {
+        card = cards[key];
+        name = this.graphvizName(key);
+        for (var index in card.dependencies) {
+          if (true) {
+            var dep = this.graphvizName(card.dependencies[index]);
+            gv.push('  ' + name + ' -> ' + dep + ';');
+          }
+        }
+      }
+    }
+    gv.push('}');
+    return gv.join('\n');
+  }
 
-    /* right colum */
-    cards['github/d3/d3#4356'].cx = 60;
-    cards['github/d3/d3#4356'].cy = 5;
-    cards['github/jbenet/depviz#7'].cx = 60;
-    cards['github/jbenet/depviz#7'].cy = 20;
-
-    /* far left colum */
-    cards['gitlab/foo/bar#234'].cx = 10;
-    cards['gitlab/foo/bar#234'].cy = 10;
-
-    /* far right colum */
-    cards['github/jbenet/depviz#6'].cx = 70;
-    cards['github/jbenet/depviz#6'].cy = 10;
-
+  positionCards(cards, width, height) {
+    var gv = this.graphviz(cards);
+    var svg = Viz(gv, {format: 'svg', engine: 'dot', scale: 2});
+    var json, name, key, card;
+    xml2js.parseString(svg, function (err, result) {
+      /* FIXME: handle errors */
+      console.log(err, result);
+      json = result;
+    });
+    var gvWidth = parseFloat(json.svg['$'].width);
+    var gvHeight = parseFloat(json.svg['$'].height);
+    var scale = 0.15;
+    for (key in cards) {
+      if (true) {
+        card = cards[key];
+        name = this.graphvizName(key);
+        for (var index in json.svg.g[0].g) {
+          if (true) {
+            var g = json.svg.g[0].g[index];
+            if (g.title[0] === name) {
+              var text = g.g[0].a[0].text[0]['$'];
+              var x = parseFloat(text.x) - gvWidth / 2;
+              var y = -parseFloat(text.y) - gvHeight / 2;
+              x *= scale;
+              y *= scale;
+              x += width / 2;
+              y += height / 2;
+              card.cx = x;
+              card.cy = y;
+              break;
+            }
+          }
+        }
+      }
+    }
+    /* FIXME: record edges */
     return cards;
   }
 
@@ -162,7 +202,11 @@ class DepGraph extends Component {
   }
 
   render() {
-    var cards = this.countDependencies(this.positionCards(this.cards()));
+    var userWidth = this.props.width / 10;
+    var userHeight = this.props.height / 10;
+    var cards = this.countDependencies(this.positionCards(
+      this.cards(), userWidth, userHeight
+    ));
     var values = []; /* I couldn't get babel-polyfill working for cards.values() */
     for (var key in cards) {
       if (true) {
@@ -170,7 +214,8 @@ class DepGraph extends Component {
       }
     }
     return <svg id="svg" xmlns="http://www.w3.org/2000/svg"
-          width="800" height="600" viewBox="0 0 80 60" fontSize="1">
+          width={this.props.width} height={this.props.height}
+          viewBox={'0 0 ' + userWidth + ' ' + userHeight} fontSize="1">
         {values.map(this.depCard)}
       </svg>
   }
