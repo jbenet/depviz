@@ -14,8 +14,11 @@ class DepCard extends Component {
       stroke: this.props.done ? Green : Red,
       strokeWidth: 0.2,
     };
-    var logo = github;
-    var host = 'https://github.com';
+    var logo, host;
+    if (this.props.host === 'github') {
+      logo = github;
+      host = 'https://github.com';
+    }
     return <g className="DepCard" xmlnsXlink="http://www.w3.org/1999/xlink">
       <rect
         x={this.props.cx - width/2} y={this.props.cy - height/2}

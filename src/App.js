@@ -18,6 +18,7 @@ class App extends Component {
             width="800" height="600" viewBox="0 0 80 60" fontSize="1">
           <DepCard
             cx={40} cy={30}
+            host="github"
             title="Foo Bar"
             dependencies={5}
             related={1}
