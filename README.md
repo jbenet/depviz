@@ -10,8 +10,6 @@ This is a tool I do not have time to create fully, but need very much for [the I
 
 If you have shipped open source software and/or UX-heavy web apps before, please help! I am also willing to pay for this work to have it done very soon (can do a contracting gig). Reach out via this repo, or email me.
 
-The React app was bootstrapped with [create-react-app][], and the most recent version of the usage guide is [here][create-react-app-guide].
-
 ## Mockups
 
 #### [depviz.mocks.pdf](./mocks/depviz.mocks.pdf)
@@ -42,6 +40,3 @@ The React app was bootstrapped with [create-react-app][], and the most recent ve
 ![](./mocks/images/depviz.mocks.011.jpg)
 ---
 ![](./mocks/images/depviz.mocks.012.jpg)
-
-[create-react-app]: https://github.com/facebookincubator/create-react-app
-[create-react-app-guide]: https://github.com/facebookincubator/create-react-app/blob/master/packages/react-scripts/template/README.md
