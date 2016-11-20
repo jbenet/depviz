@@ -6,6 +6,15 @@ import xml2js from 'xml2js';
 class DepGraph extends Component {
   cards() {
     return {
+      'asana/jbenet/depviz#7': {
+        host: 'asana',
+        title: 'jbenet/depviz#234',
+        href: 'https://asana.com/jbenet/depviz/issues/8',
+        done: false,
+        dependencies: [
+          'github/jbenet/depviz#10',
+        ],
+      },
       'github/d3/d3#4356': {
         host: 'github',
         title: 'd3/d3$4356',
