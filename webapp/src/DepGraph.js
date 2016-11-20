@@ -225,7 +225,8 @@ class DepGraph extends Component {
     const viewBox = [this.props.dx, this.props.dy, userWidth, userHeight].join(' ');
     return <svg id="svg" xmlns="http://www.w3.org/2000/svg"
           width={this.props.width} height={this.props.height}
-          viewBox={viewBox} fontSize="1">
+          viewBox={viewBox} fontSize="1"
+          style={{border: 'solid 2px #333'}}>
         {values.map(this.depCard)}
       </svg>
   }
