@@ -1,4 +1,5 @@
 import React, { Component } from 'react';
+import github from './logo/github.svg';
 import { Neutral } from './Color';
 import DepIndicators from './DepIndicators';
 
@@ -12,13 +13,23 @@ class DepCard extends Component {
       opacity: '0.1',
       strokeWidth: 0,
     };
-    return <g className="DepCard">
+    var logo = github;
+    var host = 'https://github.com';
+    return <g className="DepCard" xmlnsXlink="http://www.w3.org/1999/xlink">
       <rect
         x={this.props.cx - width/2} y={this.props.cy - height/2}
         width={width} height={height} rx="0.5" ry="0.5" style={style}>
       </rect>
-      <text x={this.props.cx} y={this.props.cy}
-          transform={'translate(' + (-width/2 + 0.5) + ', ' + (-height/2 + 1.5) + ')'}>
+      <a xlinkHref={host}>
+        <image
+          x={this.props.cx - width/2 + 0.5} y={this.props.cy - 0.4 * height}
+          width={0.8 * height} height={0.8 * height}
+          xlinkHref={logo}>
+        </image>
+      </a>
+      <text
+        x={this.props.cx - width/2 + 0.5 + height}
+        y={this.props.cy - height/2 + 1.5}>
         {this.props.title}
       </text>
       <DepIndicators
