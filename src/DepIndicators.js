@@ -56,7 +56,10 @@ class RelatedIndicator extends Component {
 
 class DependentsIndicator extends Component {
   render() {
-    var color = this.props.done ? Green : Red;
+    var color = Neutral;
+    if (this.props.dependents) {
+      color = this.props.done ? Green : Red;
+    }
     var attributes = {};
     if (this.props.transform) {
       attributes.transform = this.props.transform;
