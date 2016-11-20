@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
 import github from './logo/github.svg';
+import gitlab from './logo/gitlab.svg';
 import { Red, Green, Neutral } from './Color';
 import DepIndicators from './DepIndicators';
 
@@ -18,6 +19,9 @@ class DepCard extends Component {
     if (this.props.host === 'github') {
       logo = github;
       host = 'https://github.com';
+    } else if (this.props.host === 'gitlab') {
+      logo = gitlab;
+      host = 'https://gitlab.com';
     }
     return <g className="DepCard" xmlnsXlink="http://www.w3.org/1999/xlink">
       <rect
