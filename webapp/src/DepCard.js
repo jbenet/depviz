@@ -1,4 +1,5 @@
 import React, { Component } from 'react';
+import asana from './logo/asana.svg';
 import github from './logo/github.svg';
 import gitlab from './logo/gitlab.svg';
 import { Red, Green, Neutral } from './Color';
@@ -16,7 +17,10 @@ class DepCard extends Component {
       strokeWidth: 0.2,
     };
     var logo, host;
-    if (this.props.host === 'github') {
+    if (this.props.host === 'asana') {
+      logo = asana;
+      host = 'https://asana.com/';
+    } else if (this.props.host === 'github') {
       logo = github;
       host = 'https://github.com';
     } else if (this.props.host === 'gitlab') {
