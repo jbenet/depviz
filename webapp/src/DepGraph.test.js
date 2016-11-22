@@ -3,9 +3,9 @@ import ReactDOM from 'react-dom';
 import DepGraph from './DepGraph';
 
 it('renders without crashing', () => {
-  const svg = document.createElement('svg');
+  const div = document.createElement('div');
   ReactDOM.render(
     <DepGraph width={800} height={600} />,
-    svg
+    div
   );
 });
