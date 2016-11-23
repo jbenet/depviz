@@ -3,6 +3,18 @@ import Viz from 'viz.js';
 import xml2js from 'xml2js';
 
 class Graph extends Component {
+  constructor(props) {
+    super(props);
+    this.state = {
+      dx: 0,
+      dy: 0,
+      start: null,
+    };
+    this.startDrag = this.startDrag.bind(this);
+    this.stopDrag = this.stopDrag.bind(this);
+    this.handleMouseMove = this.handleMouseMove.bind(this);
+  }
+
   graphvizName(key) {
     return key.replace(/[^a-zA-Z0-9_]/g, '_');
   }
@@ -37,7 +49,7 @@ class Graph extends Component {
     return gv.join('\n');
   }
 
-  positionNodes(nodes, width, height) {
+  positionNodes(nodes) {
     var gv = this.graphviz(nodes);
     var svg = Viz(gv, {format: 'svg', engine: 'dot', scale: 2});
     var json, name, key, node;
@@ -62,8 +74,8 @@ class Graph extends Component {
               var y = -parseFloat(text.y) - gvHeight / 2;
               x *= scale;
               y *= scale;
-              x += width / 2;
-              y += height / 2;
+              x += this.userWidth() / 2;
+              y += this.userHeight() / 2;
               positioned.push({
                 key: name,
                 node: node,
@@ -80,14 +92,45 @@ class Graph extends Component {
     return positioned;
   }
 
+  userWidth() {
+    return this.props.width / 10;
+  }
+
+  userHeight() {
+    return this.props.height / 10;
+  }
+
+  viewBox() {
+    return [
+      this.state.dx,
+      this.state.dy,
+      this.userWidth(),
+      this.userHeight(),
+    ].join(' ');
+  }
+
+  startDrag(event) {
+    this.setState({start: [event.clientX, event.clientY]});
+  }
+
+  stopDrag(event) {
+    this.setState({start: null});
+  }
+
+  handleMouseMove(event) {
+    if (this.state.start) {
+      this.setState({
+        dx: this.state.dx + (this.state.start[0] - event.clientX) / 10,
+        dy: this.state.dy + (this.state.start[1] - event.clientY) / 10,
+        start: [event.clientX, event.clientY],
+      });
+    }
+  }
+
   /* Properties:
    *
    * * width, the width of the graph viewport in pixels.
    * * height the height of the graph viewport in pixels.
-   * * dx (optional), a number of user units to shift the viewBox
-   *   horizontally.
-   * * dy (optional), a number of user units to shift the viewBox
-   *   vertically.
    * * nodes, an object with name keys and node values.  Nodes must
    *   support:
    *   * parents(), a method which returns an array of parent-node
@@ -96,20 +139,15 @@ class Graph extends Component {
    *   renders a node in the graph.
    */
   render() {
-    var userWidth = this.props.width / 10;
-    var userHeight = this.props.height / 10;
-    var positioned = this.positionNodes(this.props.nodes, userWidth, userHeight);
-    const viewBox = [
-      this.props.dx || 0,
-      this.props.dy || 0,
-      userWidth,
-      userHeight,
-    ].join(' ');
     return <svg id="svg" xmlns="http://www.w3.org/2000/svg"
           width={this.props.width} height={this.props.height}
-          viewBox={viewBox} fontSize="1"
-          style={{border: 'solid 2px #333'}}>
-        {positioned.map(this.props.renderNode)}
+          viewBox={this.viewBox()} fontSize="1"
+          style={{border: 'solid 2px #333'}}
+          onMouseDown={this.startDrag}
+          onMouseUp={this.stopDrag}
+          onMouseOut={this.stopDrag}
+          onMouseMove={this.handleMouseMove}>
+        {this.positionNodes(this.props.nodes).map(this.props.renderNode)}
       </svg>
   }
 }

@@ -14,7 +14,7 @@ class App extends Component {
         <p className="App-intro">
           To get started, edit <code>src/App.js</code> and save to reload.
         </p>
-        <DepGraph width={800} height={600} dx={0} dy={20} />
+        <DepGraph width={800} height={600} />
       </div>
     );
   }

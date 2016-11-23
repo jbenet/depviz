@@ -162,8 +162,6 @@ class DepGraph extends Component {
     return <Graph
       width={this.props.width}
       height={this.props.height}
-      dx={this.props.dx}
-      dy={this.props.dy}
       renderNode={renderNode}
       nodes={nodes} />
   }
