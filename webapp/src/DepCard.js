@@ -16,6 +16,11 @@ class DepCard extends PureComponent {
       stroke: this.props.done ? Green : Red,
       strokeWidth: 0.2,
     };
+    var backgroundStyle = {
+      fill: 'white',
+      stroke: 'white',
+      strokeWidth: 0.1,
+    };
     var logo, host;
     if (this.props.host === 'asana') {
       logo = asana;
@@ -28,6 +33,10 @@ class DepCard extends PureComponent {
       host = 'https://gitlab.com';
     }
     return <g className="DepCard" xmlnsXlink="http://www.w3.org/1999/xlink">
+      <rect
+        x={this.props.cx - width/2} y={this.props.cy - height/2}
+        width={width} height={height} rx="0.5" ry="0.5" style={backgroundStyle}>
+      </rect>
       <rect
         x={this.props.cx - width/2} y={this.props.cy - height/2}
         width={width} height={height} rx="0.5" ry="0.5" style={style}>
