@@ -1,22 +1,15 @@
 import React, { PureComponent } from 'react';
 import Viz from 'viz.js';
 import xml2js from 'xml2js';
+import DraggableSVG from './DraggableSVG';
 
 class Graph extends PureComponent {
-  constructor(props) {
-    super(props);
-    this.state = {
-      dx: 0,
-      dy: 0,
-      start: null,
-    };
-    this.startDrag = this.startDrag.bind(this);
-    this.stopDrag = this.stopDrag.bind(this);
-    this.handleMouseMove = this.handleMouseMove.bind(this);
+  nodeName(key) {
+    return key.replace(/[^a-zA-Z0-9_]/g, '_');
   }
 
-  graphvizName(key) {
-    return key.replace(/[^a-zA-Z0-9_]/g, '_');
+  edgeName(key1, key2) {
+    return this.nodeName(key1) + '__to__' + this.nodeName(key2);
   }
 
   graphviz(nodes) {
@@ -24,23 +17,24 @@ class Graph extends PureComponent {
       'digraph {',
       '  node [shape=box];', /* FIXME: node size */
     ];
-    var key, node, name;
+    var key, name, node;
     for (key in nodes) {
       if (true) {
         node = nodes[key];
-        name = this.graphvizName(key);
+        name = this.nodeName(key);
         gv.push('  node [href=' + name + '] ' + name + ';');
       }
     }
     for (key in nodes) {
       if (true) {
         node = nodes[key];
-        name = this.graphvizName(key);
+        name = this.nodeName(key);
         var parents = node.parents();
         for (var index in parents) {
           if (true) {
-            var dep = this.graphvizName(parents[index]);
-            gv.push('  ' + name + ' -> ' + dep + ';');
+            var parent = parents[index];
+            var parentName = this.nodeName(parent);
+            gv.push('  edge [href=' + this.edgeName(parent, key) + '] ' + parentName + ' -> ' + name + ';');
           }
         }
       }
@@ -49,38 +43,58 @@ class Graph extends PureComponent {
     return gv.join('\n');
   }
 
+  userCoord(x, y, gvTranslateX, gvTranslateY, gvWidth, gvHeight) {
+    x += gvTranslateX - gvWidth / 2;
+    y += gvTranslateY - gvHeight / 2;
+    x *= 0.15;
+    y *= 0.15;
+    x += this.userWidth() / 2;
+    y += this.userHeight() / 2;
+    return {x: x, y: y};
+  }
+
   positionNodes(nodes) {
     var gv = this.graphviz(nodes);
     var svg = Viz(gv, {format: 'svg', engine: 'dot', scale: 2});
-    var json, name, key, node;
+    var g, index, json, name, node, node1, node2;
     xml2js.parseString(svg, function (err, result) {
       /* FIXME: handle errors */
       json = result;
     });
-    var gvWidth = parseFloat(json.svg['$'].width);
-    var gvHeight = parseFloat(json.svg['$'].height);
-    var scale = 0.15;
+    var gvWidth = parseFloat(json.svg.$.width);
+    var gvHeight = parseFloat(json.svg.$.height);
+    var transform = json.svg.g[0].$.transform;
+    var translateRegex = /.*translate\(([-0-9.]*) ([-0-9.]*)\).*/;
+    var gvTranslateX = parseFloat(transform.replace(
+      translateRegex,
+      function (match, p1) {
+        return p1;
+      },
+    ));
+    var gvTranslateY = parseFloat(transform.replace(
+      translateRegex,
+      function (match, p1, p2) {
+        return p2;
+      },
+    ));
     var positioned = [];
-    for (key in nodes) {
+    for (var key in nodes) {
       if (true) {
         node = nodes[key];
-        name = this.graphvizName(key);
-        for (var index in json.svg.g[0].g) {
+        name = this.nodeName(key);
+        for (index in json.svg.g[0].g) {
           if (true) {
-            var g = json.svg.g[0].g[index];
+            g = json.svg.g[0].g[index];
             if (g.title[0] === name) {
-              var text = g.g[0].a[0].text[0]['$'];
-              var x = parseFloat(text.x) - gvWidth / 2;
-              var y = -parseFloat(text.y) - gvHeight / 2;
-              x *= scale;
-              y *= scale;
-              x += this.userWidth() / 2;
-              y += this.userHeight() / 2;
+              var text = g.g[0].a[0].text[0].$;
+              var coord = this.userCoord(
+                parseFloat(text.x), parseFloat(text.y),
+                gvTranslateX, gvTranslateY, gvWidth, gvHeight);
               positioned.push({
                 key: name,
                 node: node,
-                cx: x,
-                cy: y,
+                cx: coord.x,
+                cy: coord.y,
               });
               break;
             }
@@ -88,67 +102,85 @@ class Graph extends PureComponent {
         }
       }
     }
-    /* FIXME: record edges */
-    return positioned;
+    var edges = [];
+    for (var k1 in nodes) {
+      if (true) {
+        node1 = nodes[k1];
+        for (var k2 in nodes) {
+          if (true) {
+            name = this.edgeName(k1, k2);
+            node2 = nodes[k2];
+            if (k1 === k2) {
+              continue;
+            }
+            for (index in json.svg.g[0].g) {
+              if (true) {
+                g = json.svg.g[0].g[index];
+                if (g.title[0] === name.replace('__to__', '->')) {
+                  // FIXME: parse from g.g[0].a[0].path[0].$.d and
+                  // g.g[0].a[0].polygon[0].$.points
+                  for (var j in positioned) {
+                    if (positioned[j].key === this.nodeName(k1)) {
+                      for (var k in positioned) {
+                        if (positioned[k].key === this.nodeName(k2)) {
+                          var x1 = positioned[j].cx;
+                          var y1 = positioned[j].cy;
+                          var x2 = positioned[k].cx;
+                          var y2 = positioned[k].cy;
+                          edges.push({
+                            key: name,
+                            node1: node1,
+                            node2: node2,
+                            path: ['M', x1, y1, 'L', x2, y2].join(' '),
+                          });
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+    return {
+      'edges': edges,
+      'nodes': positioned,
+    }
   }
 
   userWidth() {
-    return this.props.width / 10;
+    return this.props.width / this.props.scale;
   }
 
   userHeight() {
-    return this.props.height / 10;
-  }
-
-  viewBox() {
-    return [
-      this.state.dx,
-      this.state.dy,
-      this.userWidth(),
-      this.userHeight(),
-    ].join(' ');
-  }
-
-  startDrag(event) {
-    this.setState({start: [event.clientX, event.clientY]});
-  }
-
-  stopDrag(event) {
-    this.setState({start: null});
-  }
-
-  handleMouseMove(event) {
-    if (this.state.start) {
-      this.setState({
-        dx: this.state.dx + (this.state.start[0] - event.clientX) / 10,
-        dy: this.state.dy + (this.state.start[1] - event.clientY) / 10,
-        start: [event.clientX, event.clientY],
-      });
-    }
+    return this.props.height / this.props.scale;
   }
 
   /* Properties:
    *
    * * width, the width of the graph viewport in pixels.
-   * * height the height of the graph viewport in pixels.
+   * * height, the height of the graph viewport in pixels.
+   * * scale, the ratio between viewport pixels and user units.
    * * nodes, an object with name keys and node values.  Nodes must
    *   support:
    *   * parents(), a method which returns an array of parent-node
    *     names.
    * * renderNode({node: ..., cx: ..., cy: ...), a method which
    *   renders a node in the graph.
+   * * renderEdge({node1: ..., node2: ..., path: ...), a method which
+   *   renders an edge in the graph.
    */
   render() {
-    return <svg id="svg" xmlns="http://www.w3.org/2000/svg"
-          width={this.props.width} height={this.props.height}
-          viewBox={this.viewBox()} fontSize="1"
-          style={{border: 'solid 2px #333'}}
-          onMouseDown={this.startDrag}
-          onMouseUp={this.stopDrag}
-          onMouseOut={this.stopDrag}
-          onMouseMove={this.handleMouseMove}>
-        {this.positionNodes(this.props.nodes).map(this.props.renderNode)}
-      </svg>
+    var positioned = this.positionNodes(this.props.nodes);
+    return <DraggableSVG
+        width={this.props.width} height={this.props.height}
+        scale={this.props.scale}>
+      {this.props.children}
+      {positioned.edges.map(this.props.renderEdge)}
+      {positioned.nodes.map(this.props.renderNode)}
+    </DraggableSVG>
   }
 }
 

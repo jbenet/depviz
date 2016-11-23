@@ -31,8 +31,14 @@ it('renders without crashing', () => {
     </g>
   }
 
+  var renderEdge = function(data) {
+    return <path key={data.node1.title + ' to ' + data.node2.title}
+      d={data.path} style={{stroke: 'black'}} />
+  }
+
   ReactDOM.render(
-    <Graph width={800} height={600} nodes={nodes} renderNode={renderNode} />,
+    <Graph width={800} height={600} scale={10} nodes={nodes}
+      renderNode={renderNode} renderEdge={renderEdge} />,
     div
   );
 });

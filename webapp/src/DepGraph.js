@@ -1,4 +1,5 @@
 import React, { PureComponent } from 'react';
+import { Red, Green } from './Color';
 import DepCard from './DepCard';
 import Graph from './Graph';
 
@@ -159,10 +160,21 @@ class DepGraph extends PureComponent {
     var renderNode = function(data) {
       return data.node.depCard(data.cx, data.cy, nodes);
     }
+    var renderEdge = function(data) {
+      var key = (data.node1.host + '/' + data.node1.title + '-' +
+        data.node2.host + '/' + data.node2.title);
+      var style = {
+        stroke: data.node1.done ? Green : Red,
+        strokeWidth: 0.2,
+      };
+      return <path key={key} d={data.path} style={style} />
+    }
     return <Graph
       width={this.props.width}
       height={this.props.height}
+      scale={10}
       renderNode={renderNode}
+      renderEdge={renderEdge}
       nodes={nodes} />
   }
 }
