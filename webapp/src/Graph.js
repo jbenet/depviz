@@ -1,8 +1,8 @@
-import React, { Component } from 'react';
+import React, { PureComponent } from 'react';
 import Viz from 'viz.js';
 import xml2js from 'xml2js';
 
-class Graph extends Component {
+class Graph extends PureComponent {
   constructor(props) {
     super(props);
     this.state = {

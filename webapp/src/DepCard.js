@@ -1,11 +1,11 @@
-import React, { Component } from 'react';
+import React, { PureComponent } from 'react';
 import asana from './logo/asana.svg';
 import github from './logo/github.svg';
 import gitlab from './logo/gitlab.svg';
 import { Red, Green, Neutral } from './Color';
 import DepIndicators from './DepIndicators';
 
-class DepCard extends Component {
+class DepCard extends PureComponent {
   render() {
     var width = 15;
     var height = 3;

@@ -1,4 +1,4 @@
-import React, { Component } from 'react';
+import React, { PureComponent } from 'react';
 import DepCard from './DepCard';
 import Graph from './Graph';
 
@@ -51,7 +51,7 @@ class Node {
   }
 }
 
-class DepGraph extends Component {
+class DepGraph extends PureComponent {
   nodes() {
     return {
       'asana/jbenet/depviz#7': new Node({

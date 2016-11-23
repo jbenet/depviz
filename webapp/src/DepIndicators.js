@@ -1,7 +1,7 @@
-import React, { Component } from 'react';
+import React, { PureComponent } from 'react';
 import { Red, Green, Neutral } from './Color';
 
-class DepIndicator extends Component {
+class DepIndicator extends PureComponent {
   render() {
     var style = {
       fill: this.props.color,
@@ -22,7 +22,7 @@ class DepIndicator extends Component {
   }
 }
 
-class DependenciesIndicator extends Component {
+class DependenciesIndicator extends PureComponent {
   render() {
     var count, color;
     if (this.props.blockers) {
@@ -42,7 +42,7 @@ class DependenciesIndicator extends Component {
   }
 }
 
-class RelatedIndicator extends Component {
+class RelatedIndicator extends PureComponent {
   render() {
     var attributes = {};
     if (this.props.transform) {
@@ -54,7 +54,7 @@ class RelatedIndicator extends Component {
   }
 }
 
-class DependentsIndicator extends Component {
+class DependentsIndicator extends PureComponent {
   render() {
     var color = Neutral;
     if (this.props.dependents) {
@@ -70,7 +70,7 @@ class DependentsIndicator extends Component {
   }
 }
 
-class DepIndicators extends Component {
+class DepIndicators extends PureComponent {
   render() {
     var relatedX = this.props.cx;
     if (this.props.dy < 1.75) {
