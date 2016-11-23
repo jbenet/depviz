@@ -31,6 +31,8 @@ class DepCard extends PureComponent {
     } else if (this.props.host === 'gitlab') {
       logo = gitlab;
       host = 'https://gitlab.com';
+    } else {
+      throw new Error('unrecognized host: ' + this.props.host);
     }
     return <g className="DepCard" xmlnsXlink="http://www.w3.org/1999/xlink">
       <rect
@@ -52,7 +54,7 @@ class DepCard extends PureComponent {
         <text
           x={this.props.cx - width/2 + 0.5 + height}
           y={this.props.cy - height/2 + 1.5}>
-          {this.props.title}
+          {this.props.slug.replace(/^[^\/]*\//, '')}
         </text>
       </a>
       <DepIndicators

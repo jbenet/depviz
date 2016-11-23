@@ -41,6 +41,7 @@ class Node {
     return <DepCard
       key={key}
       cx={cx} cy={cy}
+      slug={key}
       host={this.host}
       title={this.title}
       href={this.href}
