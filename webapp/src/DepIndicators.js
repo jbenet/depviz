@@ -7,11 +7,7 @@ class DepIndicator extends PureComponent {
       fill: this.props.color,
       strokeWidth: 0,
     };
-    var attributes = {};
-    if (this.props.transform) {
-      attributes.transform = this.props.transform;
-    }
-    return <g className="DepIndicator" {...attributes}>
+    return <g className="DepIndicator">
       <circle cx={this.props.cx} cy={this.props.cy} r="1" style={style}>
           </circle>
       <text x={this.props.cx} y={this.props.cy}
@@ -32,25 +28,17 @@ class DependenciesIndicator extends PureComponent {
       count = this.props.dependencies;
       color = Green;
     }
-    var attributes = {};
-    if (this.props.transform) {
-      attributes.transform = this.props.transform;
-    }
     return <DepIndicator
       cx={this.props.cx} cy={this.props.cy}
-      count={count} color={color} {...attributes} />
+      count={count} color={color} />
   }
 }
 
 class RelatedIndicator extends PureComponent {
   render() {
-    var attributes = {};
-    if (this.props.transform) {
-      attributes.transform = this.props.transform;
-    }
     return <DepIndicator
       cx={this.props.cx} cy={this.props.cy}
-      count={this.props.related} color={Neutral} {...attributes} />
+      count={this.props.related} color={Neutral} />
   }
 }
 
@@ -60,13 +48,9 @@ class DependentsIndicator extends PureComponent {
     if (this.props.dependents) {
       color = this.props.done ? Green : Red;
     }
-    var attributes = {};
-    if (this.props.transform) {
-      attributes.transform = this.props.transform;
-    }
     return <DepIndicator
       cx={this.props.cx} cy={this.props.cy}
-      count={this.props.dependents} color={color} {...attributes} />
+      count={this.props.dependents} color={color} />
   }
 }
 
@@ -78,13 +62,11 @@ class DepIndicators extends PureComponent {
     }
     return <g className="DepIndicators">
       <DependenciesIndicator
-        cx={this.props.cx} cy={this.props.cy}
-        transform={'translate(0, -' + this.props.dy + ')'}
+        cx={this.props.cx} cy={this.props.cy - this.props.dy}
         blockers={this.props.blockers}
         dependencies={this.props.dependencies} />
       <DependentsIndicator
-        cx={this.props.cx} cy={this.props.cy}
-        transform={'translate(0, ' + this.props.dy + ')'}
+        cx={this.props.cx} cy={this.props.cy + this.props.dy}
         dependents={this.props.dependents}
         done={this.props.done} />
       <RelatedIndicator
