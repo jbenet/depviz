@@ -1,147 +1,79 @@
 import React, { PureComponent } from 'react';
-import GitHub from 'github-api';
 import { Red, Green } from './Color';
-import DepCard from './DepCard';
 import Graph from './Graph';
-
-const gh = new GitHub(); /* unauthenticated client */
-
-class Node {
-  constructor(data) {
-    for (var key in data) {
-      if (true) {
-        this[key] = data[key];
-      }
-    }
-  }
-
-  parents() {
-    return this.dependencies ? this.dependencies : [];
-  }
-
-  dependencyCount() {
-    return this.dependencies ? this.dependencies.length : 0;
-  }
-
-  relatedCount() {
-    return this.related ? this.related.length : 0;
-  }
-
-  dependentCount(key, nodes) {
-    var count = 0;
-    for (var dependentKey in nodes) {
-      if (true) {
-        if (nodes[dependentKey].parents().indexOf(key) !== -1) {
-          count += 1;
-        }
-      }
-    }
-    return count;
-  }
-
-  depCard(cx, cy, nodes) {
-    return <DepCard
-      key={this.key}
-      cx={cx} cy={cy}
-      slug={this.key}
-      host={this.host}
-      title={this.title}
-      href={this.href}
-      blockers={this.blockers}
-      dependencies={this.dependencyCount()}
-      related={this.relatedCount()}
-      dependents={this.dependentCount(this.key, nodes || {})}
-      done={this.done} />
-  }
-}
 
 class DepGraph extends PureComponent {
   constructor(props) {
     super(props);
     this.state = {
       nodes: {},
+      pending: {},
     };
-    this.nodePromise = this.nodes();
+  }
+
+  componentDidMount() {
+    this.nodes();
   }
 
   nodes() {
-    return this.getNode(this.props.slug);
+    if (!this.props.getNode) {
+      throw new Error('getNode unset');
+    }
+    var promises = [];
+    for (var index in this.props.slugs) {
+      if (true) {
+        var key = this.props.slugs[index];
+        promises.push(this.getNode(key));
+      }
+    }
+    return Promise.all(promises);
   }
 
   getNode(key) {
-    if (this.state.nodes[key]) {
-      return Promise.resolve();
-    }
-    var host = key.split('/', 1);
-    if (host[0] === 'github') {
-      return this.getGitHubNode(key);
-    }
-    throw new Error('unrecognized key host: ' + key);
-  }
-
-  getGitHubNode(key) {
-    var match = /^github\/(.*)\/(.*)#([0-9]*)$/.exec(key);
-    if (!match) {
-      throw new Error('unrecognized GitHub key: ' + key);
-    }
-    var user = match[1];
-    var repo = match[2];
-    var number = parseInt(match[3], 10);
     var _this = this;
-    return gh.getIssues(
-      user, repo
-    ).getIssue(
-      number
-    ).then(function (issue) {
-      var dependencies = [];
-      var related = [];
-      var regexp = /^depends +on +(?:([^ ]+)\/)?(?:([^ ]+))?(?:#([0-9]+)) *$/gim;
-      // FIXME: look for related too
-      var match;
-      for (;;) {
-        match = regexp.exec(issue.data.body);
-        if (match === null) {
-          break;
-        }
-        var user1 = match[1];
-        var repo1 = match[2];
-        var number1 = parseInt(match[3], 10);
-        if ((user1 && !repo1) || (!user1 && repo1)) {
-          continue;
-        }
-        if (!user1 && !repo1) {
-          user1 = user;
-          repo1 = repo;
-        }
-        var relatedKey = 'github/' + user1 + '/' + repo1 + '#' + number1;
-        dependencies.push(relatedKey);
-        if (issue.data.state === 'open') {
-          _this.getNode(relatedKey);  // FIXME: attach promise result
-        }
+    this.setState(function (prevState) {
+      if (prevState.nodes[key] || prevState.pending[key]) {
+        return prevState;
       }
-      var nodes = {..._this.state.nodes};
-      nodes[key] = new Node({
-        key: key,
-        host: 'github',
-        title: issue.data.title,
-        href: issue.data.html_url,
-        done: issue.data.state !== 'open',
-        dependencies: dependencies,
-        related: related,
-        user: issue.data.user.login,
+      _this.props.getNode(key).then(function (node) {
+        _this.setState(function (prevState) {
+          var nodes = {...prevState.nodes};
+          nodes[key] = node;
+          var pending = {...prevState.pending};
+          delete pending[key];
+          return {...prevState, nodes: nodes, pending: pending};
+        });
+        if (!node.props.done) {
+          var parents = node.parents();
+          for (var index in parents) {
+            if (true) {
+              var relatedKey = parents[index];
+              _this.getNode(relatedKey);
+            }
+          }
+        }
       });
-      _this.setState({..._this.state, nodes: nodes});
+      var pending = {...prevState.pending};
+      pending[key] = true;
+      return {...prevState, pending: pending};
     });
   }
 
+  /* Properties:
+   *
+   * * slugs, roots for the issue graph.  An array of strings, like:
+   *   ['github/jbenet/depviz#1', 'gitlab/foo/bar#123']
+   * * width, the width of the graph viewport in pixels.
+   * * height, the height of the graph viewport in pixels.
+   * * getNode() -> Node, a callback for resolving nodes.
+   */
   render() {
     var _this = this;
     var renderNode = function(data) {
       return data.node.depCard(data.cx, data.cy, _this.state.nodes);
     }
     var renderEdge = function(data) {
-      var key = (data.node1.host + '/' + data.node1.title + '-' +
-        data.node2.host + '/' + data.node2.title);
+      var key = data.node1.props.slug + '-' + data.node2.props.slug;
       var style = {
         stroke: data.node1.done ? Green : Red,
         strokeWidth: 0.2,

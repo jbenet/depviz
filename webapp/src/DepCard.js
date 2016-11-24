@@ -6,6 +6,45 @@ import { Red, Green, Neutral } from './Color';
 import DepIndicators from './DepIndicators';
 
 class DepCard extends PureComponent {
+  parents() {
+    return this.props.dependencies ? this.props.dependencies : [];
+  }
+
+  dependencyCount() {
+    return this.props.dependencies ? this.props.dependencies.length : 0;
+  }
+
+  relatedCount() {
+    return this.props.related ? this.props.related.length : 0;
+  }
+
+  dependentCount(nodes) {
+    var count = 0;
+    for (var dependentKey in nodes) {
+      if (true) {
+        if (nodes[dependentKey].parents().indexOf(this.props.slug) !== -1) {
+          count += 1;
+        }
+      }
+    }
+    return count;
+  }
+
+  depCard(cx, cy, nodes) {
+    return <DepCard
+      key={this.props.slug}
+      cx={cx} cy={cy}
+      slug={this.props.slug}
+      host={this.props.host}
+      title={this.props.title}
+      href={this.props.href}
+      blockers={this.props.blockers}
+      dependencies={this.dependencyCount()}
+      related={this.relatedCount()}
+      dependents={this.dependentCount(nodes || {})}
+      done={this.props.done} />
+  }
+
   render() {
     var width = 15;
     var height = 3;
