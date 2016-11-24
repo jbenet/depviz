@@ -11,10 +11,7 @@ class App extends Component {
           <img src={logo} className="App-logo" alt="logo" />
           <h2>Welcome to React</h2>
         </div>
-        <p className="App-intro">
-          To get started, edit <code>src/App.js</code> and save to reload.
-        </p>
-        <DepGraph width={800} height={600} slug="github/jbenet/depviz#7" />
+        <DepGraph width={window.innerWidth} height={window.innerHeight} slug="github/jbenet/depviz#7" />
       </div>
     );
   }
