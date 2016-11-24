@@ -60,7 +60,6 @@ class DraggableSVG extends PureComponent {
     return <svg xmlns="http://www.w3.org/2000/svg"
       width={this.props.width} height={this.props.height}
       viewBox={this.viewBox()} fontSize="1"
-      style={{border: 'solid 2px #333'}}
       onMouseDown={this.startDrag}
       onMouseUp={this.stopDrag}
       onMouseOut={this.stopDrag}

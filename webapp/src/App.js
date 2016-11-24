@@ -9,9 +9,9 @@ class App extends Component {
       <div className="App">
         <div className="App-header">
           <img src={logo} className="App-logo" alt="logo" />
-          <h2>Welcome to React</h2>
+          <h1>depviz</h1>
         </div>
-        <DepGraph width={window.innerWidth} height={window.innerHeight} slug="github/jbenet/depviz#7" />
+        <DepGraph width={window.innerWidth} height={window.innerHeight - 40} slug="github/jbenet/depviz#7" />
       </div>
     );
   }
