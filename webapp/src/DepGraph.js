@@ -1,7 +1,10 @@
 import React, { PureComponent } from 'react';
+import GitHub from 'github-api';
 import { Red, Green } from './Color';
 import DepCard from './DepCard';
 import Graph from './Graph';
+
+const gh = new GitHub(); /* unauthenticated client */
 
 class Node {
   constructor(data) {
@@ -37,129 +40,104 @@ class Node {
   }
 
   depCard(cx, cy, nodes) {
-    var key = this.host + '/' + this.title;
     return <DepCard
-      key={key}
+      key={this.key}
       cx={cx} cy={cy}
-      slug={key}
+      slug={this.key}
       host={this.host}
       title={this.title}
       href={this.href}
       blockers={this.blockers}
       dependencies={this.dependencyCount()}
       related={this.relatedCount()}
-      dependents={this.dependentCount(key, nodes || {})}
+      dependents={this.dependentCount(this.key, nodes || {})}
       done={this.done} />
   }
 }
 
 class DepGraph extends PureComponent {
-  nodes() {
-    return {
-      'asana/jbenet/depviz#7': new Node({
-        host: 'asana',
-        title: 'jbenet/depviz#234',
-        href: 'https://asana.com/jbenet/depviz/issues/8',
-        done: false,
-        dependencies: [
-          'github/jbenet/depviz#10',
-        ],
-      }),
-      'github/d3/d3#4356': new Node({
-        host: 'github',
-        title: 'd3/d3#4356',
-        href: 'https://github.com/d3/d3/pull/4356',
-        done: true,
-      }),
-      'github/gviz/gviz-d3#32': new Node({
-        host: 'github',
-        title: 'gviz/gviz-d3#32',
-        href: 'https://github.com/d3/d3/pull/4356',
-        done: true,
-      }),
-      'github/jbenet/depviz#1': new Node({
-        host: 'github',
-        title: 'jbenet/depviz#1',
-        href: 'https://github.com/jbenet/depviz/issues/1',
-        done: false,
-        dependencies: [
-          'github/jbenet/depviz#10',
-        ],
-      }),
-      'github/jbenet/depviz#2': new Node({
-        host: 'github',
-        title: 'jbenet/depviz#2',
-        href: 'https://github.com/jbenet/depviz/issues/2',
-        done: true,
-      }),
-      'github/jbenet/depviz#3': new Node({
-        host: 'github',
-        title: 'jbenet/depviz#3',
-        href: 'https://github.com/jbenet/depviz/issues/3',
-        done: true,
-        dependencies: [
-          'github/d3/d3#4356',
-          'github/gviz/gviz-d3#32',
-          'github/jbenet/depviz#6',
-          'github/jbenet/depviz#2',
-          'gitlab/foo/bar#234',
-        ],
-      }),
-      'github/jbenet/depviz#5': new Node({
-        host: 'github',
-        title: 'jbenet/depviz#5',
-        href: 'https://github.com/jbenet/depviz/issues/5',
-        done: false,
-        related: [
-          'github/jbenet/depviz#3',
-        ],
-      }),
-      'github/jbenet/depviz#6': new Node({
-        host: 'github',
-        title: 'jbenet/depviz#6',
-        href: 'https://github.com/jbenet/depviz/issues/6',
-        done: true,
-        dependencies: [
-          'github/d3/d3#4356',
-          'github/gviz/gviz-d3#32',
-        ],
-      }),
-      'github/jbenet/depviz#7': new Node({
-        host: 'github',
-        title: 'jbenet/depviz#7',
-        href: 'https://github.com/jbenet/depviz/issues/7',
-        done: false,
-        dependencies: [
-          'github/jbenet/depviz#3',
-        ],
-      }),
-      'github/jbenet/depviz#10': new Node({
-        host: 'github',
-        title: 'jbenet/depviz#10',
-        href: 'https://github.com/jbenet/depviz/issues/10',
-        done: false,
-        dependencies: [
-          'github/jbenet/depviz#3',
-          'github/jbenet/depviz#5',
-          'github/jbenet/depviz#7',
-        ],
-      }),
-      'gitlab/foo/bar#234': new Node({
-        host: 'gitlab',
-        title: 'foo/bar#234',
-        href: 'https://gitlab.com/foo/bar/issues/234',
-        done: true,
-        dependencies: [
-          'github/jbenet/depviz#2',
-        ],
-      }),
+  constructor(props) {
+    super(props);
+    this.state = {
+      nodes: {},
     };
+    this.nodePromise = this.nodes();
+  }
+
+  nodes() {
+    return this.getNode(this.props.slug);
+  }
+
+  getNode(key) {
+    if (this.state.nodes[key]) {
+      return Promise.resolve();
+    }
+    var host = key.split('/', 1);
+    if (host[0] === 'github') {
+      return this.getGitHubNode(key);
+    }
+    throw new Error('unrecognized key host: ' + key);
+  }
+
+  getGitHubNode(key) {
+    var match = /^github\/(.*)\/(.*)#([0-9]*)$/.exec(key);
+    if (!match) {
+      throw new Error('unrecognized GitHub key: ' + key);
+    }
+    var user = match[1];
+    var repo = match[2];
+    var number = parseInt(match[3], 10);
+    var _this = this;
+    return gh.getIssues(
+      user, repo
+    ).getIssue(
+      number
+    ).then(function (issue) {
+      var dependencies = [];
+      var related = [];
+      var regexp = /^depends +on +(?:([^ ]+)\/)?(?:([^ ]+))?(?:#([0-9]+)) *$/gim;
+      // FIXME: look for related too
+      var match;
+      for (;;) {
+        match = regexp.exec(issue.data.body);
+        if (match === null) {
+          break;
+        }
+        var user1 = match[1];
+        var repo1 = match[2];
+        var number1 = parseInt(match[3], 10);
+        if ((user1 && !repo1) || (!user1 && repo1)) {
+          continue;
+        }
+        if (!user1 && !repo1) {
+          user1 = user;
+          repo1 = repo;
+        }
+        var relatedKey = 'github/' + user1 + '/' + repo1 + '#' + number1;
+        dependencies.push(relatedKey);
+        if (issue.data.state === 'open') {
+          _this.getNode(relatedKey);  // FIXME: attach promise result
+        }
+      }
+      var nodes = {..._this.state.nodes};
+      nodes[key] = new Node({
+        key: key,
+        host: 'github',
+        title: issue.data.title,
+        href: issue.data.html_url,
+        done: issue.data.state !== 'open',
+        dependencies: dependencies,
+        related: related,
+        user: issue.data.user.login,
+      });
+      _this.setState({..._this.state, nodes: nodes});
+    });
   }
 
   render() {
-    var nodes = this.nodes();
+    var _this = this;
     var renderNode = function(data) {
-      return data.node.depCard(data.cx, data.cy, nodes);
+      return data.node.depCard(data.cx, data.cy, _this.state.nodes);
     }
     var renderEdge = function(data) {
       var key = (data.node1.host + '/' + data.node1.title + '-' +
@@ -176,7 +154,7 @@ class DepGraph extends PureComponent {
       scale={10}
       renderNode={renderNode}
       renderEdge={renderEdge}
-      nodes={nodes} />
+      nodes={this.state.nodes} />
   }
 }
 

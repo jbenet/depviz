@@ -6,6 +6,7 @@
     "react-scripts": "0.7.0"
   },
   "dependencies": {
+    "github-api": "^2.3.0",
     "react": "^15.4.0",
     "react-dom": "^15.4.0",
     "viz.js": "^1.4.0",
