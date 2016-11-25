@@ -58,7 +58,7 @@ class DepIndicators extends PureComponent {
   render() {
     var relatedX = this.props.cx;
     if (this.props.dy < 1.75) {
-      relatedX += 1;
+      relatedX += 0.6;
     }
     return <g className="DepIndicators">
       <DependenciesIndicator
