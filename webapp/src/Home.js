@@ -1,18 +1,12 @@
 import React, { PureComponent } from 'react';
-import { Link } from 'react-router'
 import github from './logo/github.svg';
+import Jump from './Jump';
 import './Home.css';
 
 class Home extends PureComponent {
   render() {
     return <div className="Home">
-      <div className="Home-search">
-        <p>
-          <Link to="/http/github.com/jbenet/depviz/1">
-            <code>github.com/jbenet/depviz#1</code>
-          </Link>
-        </p>
-      </div>
+      <Jump push={this.props.router.push} />
       <p>
         Link issues to each other with a “depends on” relationship.
         Support for issue trackers is pluggable, and depviz currently
