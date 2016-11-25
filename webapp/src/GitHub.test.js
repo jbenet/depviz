@@ -68,10 +68,40 @@ jest.mock('github-api', () => {
 
 import GetGitHubNode, { CanonicalGitHubKey } from './GitHub';
 
-it('canonical key uses a hash sign', () => {
+it('canonical key found for hash path', () => {
+  expect(
+    CanonicalGitHubKey('github.com/jbenet/depviz#1')
+  ).toBe('github.com/jbenet/depviz#1');
+});
+
+it('canonical key found for slash path', () => {
   expect(
     CanonicalGitHubKey('github.com/jbenet/depviz/1')
   ).toBe('github.com/jbenet/depviz#1');
+});
+
+it('canonical key found for issues path', () => {
+  expect(
+    CanonicalGitHubKey('github.com/jbenet/depviz/issues/1')
+  ).toBe('github.com/jbenet/depviz#1');
+});
+
+it('canonical key found for pull path', () => {
+  expect(
+    CanonicalGitHubKey('github.com/jbenet/depviz/pull/1')
+  ).toBe('github.com/jbenet/depviz#1');
+});
+
+it('spacer hash key fails canonicalization', () => {
+  expect(() =>
+    CanonicalGitHubKey('github.com/jbenet/depviz/#1')
+  ).toThrowError('unrecognized GitHub key: github.com/jbenet/depviz/#1');
+});
+
+it('spacer without repo fails canonicalization', () => {
+  expect(() =>
+    CanonicalGitHubKey('github.com/jbenet/#1')
+  ).toThrowError('unrecognized GitHub key: github.com/jbenet/#1');
 });
 
 it('example.com host fails canonicalization', () => {

@@ -3,13 +3,19 @@ import DepCard from './DepCard';
 var calls = {};
 
 export function CanonicalDummyHostKey(key) {
-  var match = /^dummy\/(.*)\/(.*)[#\/]([0-9]*)$/.exec(key);
+  var match = /^dummy\/([^\/#]+)\/([^\/#]+)(\/|\/issues\/|)(#?)([0-9]+)$/.exec(key);
   if (!match) {
     throw new Error('unrecognized dummy key: ' + key);
   }
   var user = match[1];
   var repo = match[2];
-  var number = parseInt(match[3], 10);
+  var spacer = match[3];
+  var hash = match[4];
+  var number = parseInt(match[5], 10);
+  if (spacer && hash) {
+    throw new Error('unrecognized dummy key: ' + key);
+  }
+
   return 'dummy/' + user + '/' + repo + '#' + number;
 }
 

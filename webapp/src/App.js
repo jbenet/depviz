@@ -17,6 +17,16 @@ export class DepGraphView extends Component {
   }
 }
 
+function enterGraphView(nextState, replace) {
+  const splat = nextState.params.splat;
+  const canonicalKey = CanonicalKey(splat);
+  const canonicalPath = canonicalKey.replace(/#/g, '/');
+  if (splat === canonicalKey || splat === canonicalPath) {
+    return;
+  }
+  replace('/http/' + canonicalPath);
+}
+
 class App extends Component {
   render() {
     Canonicalizers['dummy'] = CanonicalDummyHostKey;
@@ -33,7 +43,8 @@ class App extends Component {
         </div>
         <Router history={hashHistory}>
           <Route path="/" component={Home} />
-          <Route path="/http/*" component={DepGraphView} />
+          <Route path="/http/*" component={DepGraphView}
+            onEnter={enterGraphView} />
         </Router>
       </div>
     );

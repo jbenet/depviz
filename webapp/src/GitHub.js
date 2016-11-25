@@ -4,18 +4,24 @@ import DepCard from './DepCard';
 const gh = new GitHub(); /* unauthenticated client */
 
 export function CanonicalGitHubKey(key) {
-  var match = /^github\.com\/(.*)\/(.*)[#\/]([0-9]*)$/.exec(key);
+  var match = /^github\.com\/([^\/#]+)\/([^\/#]+)(\/|\/issues\/|\/pull\/|)(#?)([0-9]+)$/.exec(key);
   if (!match) {
     throw new Error('unrecognized GitHub key: ' + key);
   }
   var user = match[1];
   var repo = match[2];
-  var number = parseInt(match[3], 10);
+  var spacer = match[3];
+  var hash = match[4]
+  var number = parseInt(match[5], 10);
+  if (spacer && hash) {
+    throw new Error('unrecognized GitHub key: ' + key);
+  }
+
   return 'github.com/' + user + '/' + repo + '#' + number;
 }
 
 function GetGitHubNode(key) {
-  var match = /^github\.com\/(.*)\/(.*)#([0-9]*)$/.exec(key);
+  var match = /^github\.com\/([^\/]*)\/([^\/]*)#([0-9]*)$/.exec(key);
   if (!match) {
     throw new Error('unrecognized GitHub key: ' + key);
   }
