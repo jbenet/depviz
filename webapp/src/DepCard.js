@@ -61,13 +61,13 @@ class DepCard extends PureComponent {
       strokeWidth: 0.1,
     };
     var logo, host;
-    if (this.props.host === 'asana') {
+    if (this.props.host === 'asana.com') {
       logo = asana;
       host = 'https://asana.com/';
-    } else if (this.props.host === 'github') {
+    } else if (this.props.host === 'github.com') {
       logo = github;
       host = 'https://github.com';
-    } else if (this.props.host === 'gitlab') {
+    } else if (this.props.host === 'gitlab.com') {
       logo = gitlab;
       host = 'https://gitlab.com';
     } else {

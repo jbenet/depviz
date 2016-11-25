@@ -32,9 +32,32 @@ jest.mock('github-api', () => {
 
 import React from 'react';
 import ReactDOM from 'react-dom';
-import App from './App';
+import { hashHistory } from 'react-router'
+import App, { DepGraphView } from './App';
 
-it('renders without crashing', () => {
+it('home page renders without crashing', () => {
   const div = document.createElement('div');
   ReactDOM.render(<App />, div);
+});
+
+it('DepGraphView renders without crashing', () => {
+  const div = document.createElement('div');
+  ReactDOM.render(
+    <DepGraphView params={{'splat': 'dummy/jbenet/depviz/1'}} />,
+    div
+  );
+});
+
+it('entering graph view normalizes non-canonical paths', () => {
+  const div = document.createElement('div');
+  ReactDOM.render(
+    <App />,
+    div,
+    function () {
+      hashHistory.push('/http/dummy/jbenet/depviz/issues/1');
+      expect(
+        hashHistory.getCurrentLocation().pathname
+      ).toBe('/http/dummy/jbenet/depviz/1');
+    },
+  );
 });

@@ -3,15 +3,25 @@ import DepCard from './DepCard';
 
 const gh = new GitHub(); /* unauthenticated client */
 
-function GetGitHubNode(key) {
-  var match = /^github\/(.*)\/(.*)#([0-9]*)$/.exec(key);
+export function CanonicalGitHubKey(key) {
+  var match = /^github\.com\/(.*)\/(.*)[#\/]([0-9]*)$/.exec(key);
   if (!match) {
     throw new Error('unrecognized GitHub key: ' + key);
   }
   var user = match[1];
   var repo = match[2];
   var number = parseInt(match[3], 10);
+  return 'github.com/' + user + '/' + repo + '#' + number;
+}
 
+function GetGitHubNode(key) {
+  var match = /^github\.com\/(.*)\/(.*)#([0-9]*)$/.exec(key);
+  if (!match) {
+    throw new Error('unrecognized GitHub key: ' + key);
+  }
+  var user = match[1];
+  var repo = match[2];
+  var number = parseInt(match[3], 10);
   return gh.getIssues(
     user, repo
   ).getIssue(
@@ -37,12 +47,12 @@ function GetGitHubNode(key) {
         user1 = user;
         repo1 = repo;
       }
-      var relatedKey = 'github/' + user1 + '/' + repo1 + '#' + number1;
+      var relatedKey = 'github.com/' + user1 + '/' + repo1 + '#' + number1;
       dependencies.push(relatedKey);
     }
     return new DepCard({
       slug: key,
-      host: 'github',
+      host: 'github.com',
       title: issue.data.title,
       href: issue.data.html_url,
       done: issue.data.state !== 'open',

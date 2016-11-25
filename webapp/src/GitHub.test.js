@@ -15,7 +15,7 @@ jest.mock('github-api', () => {
     getIssue(number) {
       if (this._calls[number]) {
         throw new Error(
-          'duplicate call for github/' +
+          'duplicate call for github.com/' +
           this._user + '/' + this._repo + '#' + number
         );
       }
@@ -32,7 +32,7 @@ jest.mock('github-api', () => {
         case 1:
           return ['#10'];
         case 3:
-          return ['#2', 'd3/d3#4356', 'gitlab/foo/bar#234'];
+          return ['#2', 'd3/d3#4356', 'gitlab.com/foo/bar#234'];
         case 5:
           return ['#3'];
         case 7:
@@ -66,22 +66,34 @@ jest.mock('github-api', () => {
   return jest.fn(() => new GitHub());
 });
 
-import GetGitHubNode from './GitHub';
+import GetGitHubNode, { CanonicalGitHubKey } from './GitHub';
 
-it('foobar host crashes', () => {
+it('canonical key uses a hash sign', () => {
+  expect(
+    CanonicalGitHubKey('github.com/jbenet/depviz/1')
+  ).toBe('github.com/jbenet/depviz#1');
+});
+
+it('example.com host fails canonicalization', () => {
   expect(() =>
-    GetGitHubNode('foobar/jbenet/depviz#1')
-  ).toThrowError('unrecognized GitHub key: foobar/jbenet/depviz#1');
+    CanonicalGitHubKey('example.com/jbenet/depviz#1')
+  ).toThrowError('unrecognized GitHub key: example.com/jbenet/depviz#1');
+});
+
+it('example.com host fails node lookup', () => {
+  expect(() =>
+    GetGitHubNode('example.com/jbenet/depviz#1')
+  ).toThrowError('unrecognized GitHub key: example.com/jbenet/depviz#1');
 });
 
 it('foo/#3 reference is skipped without crashing', () => {
   return new Promise(
     function (resolve, reject) {
-      GetGitHubNode('github/jbenet/depviz#20').then(
+      GetGitHubNode('github.com/jbenet/depviz#20').then(
         function (node) {
           if (node.parents().length) {
             reject(new Error(
-              'mock github/jbenet/depviz#20 should have no parents'
+              'mock github.com/jbenet/depviz#20 should have no parents'
             ));
             return;
           }
@@ -96,17 +108,17 @@ it('foo/#3 reference is skipped without crashing', () => {
 it('long and short references are understood', () => {
   return new Promise(
     function (resolve, reject) {
-      GetGitHubNode('github/jbenet/depviz#3').then(
+      GetGitHubNode('github.com/jbenet/depviz#3').then(
         function (node) {
           if (node.parents().length !== 3) {
             reject(new Error(
-              'mock github/jbenet/depviz#3 should have three parents'
+              'mock github.com/jbenet/depviz#3 should have three parents'
             ));
             return;
           }
-          if (node.parents()[0] !== 'github/jbenet/depviz#2') {
+          if (node.parents()[0] !== 'github.com/jbenet/depviz#2') {
             reject(new Error(
-              'short reference not expanded in github/jbenet/depviz#3'
+              'short reference not expanded in github.com/jbenet/depviz#3'
             ));
             return;
           }

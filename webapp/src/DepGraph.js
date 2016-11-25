@@ -19,18 +19,20 @@ class DepGraph extends PureComponent {
     if (!this.props.getNode) {
       throw new Error('getNode unset');
     }
-    var promises = [];
+    if (!this.props.canonicalKey) {
+      throw new Error('canonicalKey unset');
+    }
     for (var index in this.props.slugs) {
       if (true) {
         var key = this.props.slugs[index];
-        promises.push(this.getNode(key));
+        this.getNode(key);
       }
     }
-    return Promise.all(promises);
   }
 
   getNode(key) {
     var _this = this;
+    key = this.props.canonicalKey(key);
     this.setState(function (prevState) {
       if (prevState.nodes[key] || prevState.pending[key]) {
         return prevState;
@@ -62,10 +64,12 @@ class DepGraph extends PureComponent {
   /* Properties:
    *
    * * slugs, roots for the issue graph.  An array of strings, like:
-   *   ['github/jbenet/depviz#1', 'gitlab/foo/bar#123']
+   *   ['github.com/jbenet/depviz#1', 'gitlab.com/foo/bar#123']
    * * width, the width of the graph viewport in pixels.
    * * height, the height of the graph viewport in pixels.
-   * * getNode() -> Node, a callback for resolving nodes.
+   * * canonicalKey(key) -> key, a callback for canonicalizing node
+   *   names.
+   * * getNode(key) -> Node, a callback for resolving nodes.
    */
   render() {
     var _this = this;

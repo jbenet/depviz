@@ -2,6 +2,17 @@ import DepCard from './DepCard';
 
 var calls = {};
 
+export function CanonicalDummyHostKey(key) {
+  var match = /^dummy\/(.*)\/(.*)[#\/]([0-9]*)$/.exec(key);
+  if (!match) {
+    throw new Error('unrecognized dummy key: ' + key);
+  }
+  var user = match[1];
+  var repo = match[2];
+  var number = parseInt(match[3], 10);
+  return 'dummy/' + user + '/' + repo + '#' + number;
+}
+
 /* Dummy host getter for testing. */
 function GetDummyHostNode(key) {
   var match = /^dummy\/(.*)\/(.*)#([0-9]*)$/.exec(key);
@@ -29,7 +40,7 @@ function GetDummyHostNode(key) {
       return ['dummy/jbenet/depviz#10'];
     case 3:
       return [
-          'dummy/jbenet/depviz#2', 'dummy/d3/d3#4356', 'gitlab/foo/bar#234'];
+          'dummy/jbenet/depviz#2', 'dummy/d3/d3#4356', 'gitlab.com/foo/bar#234'];
     case 5:
       return ['dummy/jbenet/depviz#3'];
     case 7:
@@ -57,7 +68,7 @@ function GetDummyHostNode(key) {
 
   return Promise.resolve(new DepCard({
     slug: key,
-    host: 'github', /* because we need a logo */
+    host: 'github.com', /* because we need a logo */
     title: 'dummy ' + key,
     href: 'https://example.com/' + user + '/' + repo + '/issue/' + number,
     done: done(number),

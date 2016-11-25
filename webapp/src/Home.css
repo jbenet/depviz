@@ -1,0 +1,18 @@
+.Home {
+  padding-left: 1em;
+  padding-right: 1em;
+}
+
+.Home-search div {
+  width: 100%;
+}
+
+.Home-search p {
+  text-align: center;
+}
+
+.Home-logo {
+  height: 2em;
+  vertical-align: middle;
+  padding-right: 0.5em;
+}
