@@ -20,6 +20,51 @@ export function CanonicalGitHubKey(key) {
   return 'github.com/' + user + '/' + repo + '#' + number;
 }
 
+function nodeFromIssue(issue) {
+  var dependencies = [];
+  var related = [];
+  var regexp = /^depends +on +(?:([^ ]+)\/)?(?:([^ ]+))?(?:#([0-9]+)) *$/gim;
+  // FIXME: look for related too
+  var match;
+  match = /^.*\/([^\/]+)\/([^\/]+)$/.exec(issue.repository_url);
+  if (match === null) {
+    throw new Error(
+      'unrecognized repository URL format: ' + issue.repository_url
+    );
+  }
+  var issueUser = match[1];
+  var issueRepo = match[2];
+  var key = 'github.com/' + issueUser + '/' + issueRepo + '#' + issue.number;
+  for (;;) {
+    match = regexp.exec(issue.body);
+    if (match === null) {
+      break;
+    }
+    var user = match[1];
+    var repo = match[2];
+    var number = parseInt(match[3], 10);
+    if ((user && !repo) || (!user && repo)) {
+      continue;
+    }
+    if (!user && !repo) {
+      user = issueUser;
+      repo = issueRepo;
+    }
+    var relatedKey = 'github.com/' + user + '/' + repo + '#' + number;
+    dependencies.push(relatedKey);
+  }
+  return new DepCard({
+    slug: key,
+    host: 'github.com',
+    title: issue.title,
+    href: issue.html_url,
+    done: issue.state !== 'open',
+    dependencies: dependencies,
+    related: related,
+    user: issue.user.login,
+  });
+}
+
 function GetGitHubNode(key) {
   var match = /^github\.com\/([^\/]*)\/([^\/]*)#([0-9]*)$/.exec(key);
   if (!match) {
@@ -33,40 +78,18 @@ function GetGitHubNode(key) {
   ).getIssue(
     number
   ).then(function (issue) {
-    var dependencies = [];
-    var related = [];
-    var regexp = /^depends +on +(?:([^ ]+)\/)?(?:([^ ]+))?(?:#([0-9]+)) *$/gim;
-    // FIXME: look for related too
-    var match;
-    for (;;) {
-      match = regexp.exec(issue.data.body);
-      if (match === null) {
-        break;
-      }
-      var user1 = match[1];
-      var repo1 = match[2];
-      var number1 = parseInt(match[3], 10);
-      if ((user1 && !repo1) || (!user1 && repo1)) {
-        continue;
-      }
-      if (!user1 && !repo1) {
-        user1 = user;
-        repo1 = repo;
-      }
-      var relatedKey = 'github.com/' + user1 + '/' + repo1 + '#' + number1;
-      dependencies.push(relatedKey);
-    }
-    return new DepCard({
-      slug: key,
-      host: 'github.com',
-      title: issue.data.title,
-      href: issue.data.html_url,
-      done: issue.data.state !== 'open',
-      dependencies: dependencies,
-      related: related,
-      user: issue.data.user.login,
-    });
+    return nodeFromIssue(issue.data);
   });
 }
+
+export function GetGitHubRepoNodes(user, repo, pushNodes) {
+    gh.getIssues(
+      user, repo
+    ).listIssues(
+    ).then(function (issues) {
+      var nodes = issues.data.map(nodeFromIssue);
+      pushNodes(nodes);
+    });
+  }
 
 export default GetGitHubNode;

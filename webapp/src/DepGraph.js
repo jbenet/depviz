@@ -13,6 +13,9 @@ class DepGraph extends PureComponent {
 
   componentDidMount() {
     this.nodes();
+    if (this.props.getInitialNodes) {
+      this.props.getInitialNodes(this.pushNodes.bind(this));
+    }
   }
 
   nodes() {
@@ -22,10 +25,41 @@ class DepGraph extends PureComponent {
     if (!this.props.canonicalKey) {
       throw new Error('canonicalKey unset');
     }
-    for (var index in this.props.slugs) {
+    for (var index in (this.props.slugs || [])) {
       if (true) {
         var key = this.props.slugs[index];
         this.getNode(key);
+      }
+    }
+  }
+
+  pushNodes(nodes) {
+    var index, node;
+    var _this = this;
+    this.setState(function (prevState) {
+      var stateNodes = {...prevState.nodes};
+      var pending = {...prevState.pending};
+      for (index in nodes) {
+        if (true) {
+          var node = nodes[index];
+          stateNodes[node.props.slug] = node;
+          delete pending[node.props.slug];
+        }
+      }
+      return {...prevState, nodes: stateNodes, pending: pending};
+    });
+    for (index in nodes) {
+      if (true) {
+        node = nodes[index];
+        if (!node.props.done) {
+          var parents = node.parents();
+          for (var i in parents) {
+            if (true) {
+              var relatedKey = parents[i];
+              this.getNode(relatedKey);
+            }
+          }
+        }
       }
     }
   }
@@ -38,22 +72,7 @@ class DepGraph extends PureComponent {
         return prevState;
       }
       _this.props.getNode(key).then(function (node) {
-        _this.setState(function (prevState) {
-          var nodes = {...prevState.nodes};
-          nodes[key] = node;
-          var pending = {...prevState.pending};
-          delete pending[key];
-          return {...prevState, nodes: nodes, pending: pending};
-        });
-        if (!node.props.done) {
-          var parents = node.parents();
-          for (var index in parents) {
-            if (true) {
-              var relatedKey = parents[index];
-              _this.getNode(relatedKey);
-            }
-          }
-        }
+        _this.pushNodes([node]);
       });
       var pending = {...prevState.pending};
       pending[key] = true;
@@ -63,8 +82,12 @@ class DepGraph extends PureComponent {
 
   /* Properties:
    *
-   * * slugs, roots for the issue graph.  An array of strings, like:
+   * * slugs, (optional) roots for the issue graph.  An array of
+   *   strings, like:
    *   ['github.com/jbenet/depviz#1', 'gitlab.com/foo/bar#123']
+   * * getInitialNodes(pushNodes), (optional) a callback for resolving
+   *   initial nodes.  pushNodes takes an array of nodes and may be
+   *   called multiple times.
    * * width, the width of the graph viewport in pixels.
    * * height, the height of the graph viewport in pixels.
    * * canonicalKey(key) -> key, a callback for canonicalizing node
