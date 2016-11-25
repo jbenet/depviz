@@ -1,17 +1,18 @@
 import React, { Component } from 'react';
-import { Router, Route, hashHistory } from 'react-router'
-import logo from './logo/react.svg';
+import { Router, IndexRoute, Route, hashHistory } from 'react-router'
 import './App.css';
 import DepGraph from './DepGraph';
 import GetDummyHostNode, { CanonicalDummyHostKey } from './DummyHost';
 import GetGitHubNode, { CanonicalGitHubKey } from './GitHub';
 import GetNode, { Canonicalizers, Getters, CanonicalKey } from './GetNode';
 import Home from './Home';
+import Layout, { HeaderHeight } from './Layout';
 
 export class DepGraphView extends Component {
   render() {
     return <DepGraph
-      width={window.innerWidth} height={window.innerHeight - 40}
+      width={window.innerWidth}
+      height={window.innerHeight - HeaderHeight}
       slugs={[this.props.params.splat]}
       getNode={GetNode} canonicalKey={CanonicalKey} />
   }
@@ -35,16 +36,12 @@ class App extends Component {
     Getters['github.com'] = GetGitHubNode;
     return (
       <div className="App">
-        <div className="App-header">
-          <a href="https://github.com/jbenet/depviz">
-            <img src={logo} className="App-logo" alt="logo" />
-          </a>
-          <h1>depviz</h1>
-        </div>
         <Router history={hashHistory}>
-          <Route path="/" component={Home} />
-          <Route path="/http/*" component={DepGraphView}
-            onEnter={enterGraphView} />
+          <Route path="/" component={Layout}>
+            <IndexRoute component={Home} />
+            <Route path="/http/*" component={DepGraphView}
+              onEnter={enterGraphView} />
+          </Route>
         </Router>
       </div>
     );

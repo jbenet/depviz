@@ -1,0 +1,20 @@
+.Layout-header {
+  background-color: #222;
+  color: white;
+}
+
+.Layout-header h1 {
+  display: inline;
+  font-size: large;
+  height: 40px; /* sync with .Layout-logo and HeaderHeight */
+}
+
+.Layout-header a {
+  text-decoration: none;
+  color: white;
+}
+
+.Layout-logo {
+  height: 40px; /* sync with .Layout-h1 and HeaderHeight */
+  vertical-align: middle;
+}
