@@ -8,9 +8,6 @@ class DraggableSVG extends PureComponent {
       dy: 0,
       start: null,
     };
-    this.startDrag = this.startDrag.bind(this);
-    this.stopDrag = this.stopDrag.bind(this);
-    this.handleMouseMove = this.handleMouseMove.bind(this);
   }
 
   userWidth() {
@@ -31,21 +28,37 @@ class DraggableSVG extends PureComponent {
   }
 
   startDrag(event) {
-    this.setState({start: [event.clientX, event.clientY]});
+    var x, y;
+    if (event.type === 'mousedown') {
+      x = event.clientX;
+      y = event.clientY;
+    } else if (event.type === 'touchstart') {
+      var touch = event.changedTouches[0];
+      x = touch.pageX;
+      y = touch.pageY;
+    }
+    this.setState({start: [x, y]});
   }
 
   stopDrag(event) {
     this.setState({start: null});
   }
 
-  handleMouseMove(event) {
+  handleDrag(event) {
+    var x, y;
+    if (event.type === 'mousemove') {
+      x = event.clientX;
+      y = event.clientY;
+    } else if (event.type === 'touchmove') {
+      var touch = event.changedTouches[0];
+      x = touch.pageX;
+      y = touch.pageY;
+    }
     if (this.state.start) {
       this.setState({
-        dx: this.state.dx + (
-          this.state.start[0] - event.clientX) / this.props.scale,
-        dy: this.state.dy + (
-          this.state.start[1] - event.clientY) / this.props.scale,
-        start: [event.clientX, event.clientY],
+        dx: this.state.dx + (this.state.start[0] - x) / this.props.scale,
+        dy: this.state.dy + (this.state.start[1] - y) / this.props.scale,
+        start: [x, y],
       });
     }
   }
@@ -60,10 +73,14 @@ class DraggableSVG extends PureComponent {
     return <svg xmlns="http://www.w3.org/2000/svg"
       width={this.props.width} height={this.props.height}
       viewBox={this.viewBox()} fontSize="1"
-      onMouseDown={this.startDrag}
-      onMouseUp={this.stopDrag}
-      onMouseOut={this.stopDrag}
-      onMouseMove={this.handleMouseMove}>
+      onMouseDown={this.startDrag.bind(this)}
+      onMouseUp={this.stopDrag.bind(this)}
+      onMouseOut={this.stopDrag.bind(this)}
+      onMouseMove={this.handleDrag.bind(this)}
+      onTouchStart={this.startDrag.bind(this)}
+      onTouchMove={this.handleDrag.bind(this)}
+      onTouchEnd={this.stopDrag.bind(this)}
+      onTouchCancel={this.stopDrag.bind(this)}>
     {this.props.children}
    </svg>
   }

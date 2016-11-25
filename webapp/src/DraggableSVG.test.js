@@ -27,13 +27,25 @@ it('drag and drop shifts viewBox', () => {
         </DraggableSVG>,
         div,
         function () {
-          this.handleMouseMove({clientX: 30, clientY: 50});
+          this.handleDrag({type: 'mousemove', clientX: 30, clientY: 50});
           expect(this.state.dx).toBe(0);
           expect(this.state.dy).toBe(0);
-          this.startDrag({clientX: 10, clientY: 20});
-          this.handleMouseMove({clientX: 30, clientY: 50});
+          this.startDrag({type: 'mousedown', clientX: 10, clientY: 20});
+          this.handleDrag({type: 'mousemove', clientX: 30, clientY: 50});
           expect(this.state.dx).toBe(-2);
           expect(this.state.dy).toBe(-3);
+          this.stopDrag();
+          expect(this.state.start).toBe(null);
+          this.startDrag({
+            type: 'touchstart',
+            changedTouches: [{pageX: 10, pageY: 20}],
+          });
+          this.handleDrag({
+            type: 'touchmove',
+            changedTouches: [{pageX: 30, pageY: 50}],
+          });
+          expect(this.state.dx).toBe(-4);
+          expect(this.state.dy).toBe(-6);
           this.stopDrag();
           expect(this.state.start).toBe(null);
           resolve();
