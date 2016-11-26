@@ -1,14 +1,11 @@
 import React, { PureComponent } from 'react';
 import { Link } from 'react-router'
 import github from './logo/github.svg';
-import Jump from './Jump';
 import './Home.css';
 
 class Home extends PureComponent {
   render() {
     return <div className="Home">
-      <Jump push={this.props.router.push} />
-
       <h2 id="identifiers">Identifiers</h2>
 
       <p>

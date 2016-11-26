@@ -55,3 +55,29 @@ it('submit event without value is a no-op', () => {
     }
   );
 });
+
+it('mount / unmount cleans up resize event listener', () => {
+  const div = document.createElement('div');
+  var push = jest.fn();
+  var getSize = jest.fn();
+  getSize.mockReturnValueOnce(10)
+    .mockReturnValueOnce(20)
+    .mockReturnValueOnce(30)
+    .mockReturnValueOnce(40);
+  return new Promise(function (resolve, reject) {
+    ReactDOM.render(
+      <Jump getSize={getSize} push={push} />,
+      div,
+      function () {
+        expect(this.state.size).toBe(10);
+        var event = new Event('resize');
+        window.dispatchEvent(event);
+        expect(this.state.size).toBe(20);
+        this.componentWillUnmount();
+        window.dispatchEvent(event);
+        expect(this.state.size).toBe(20);
+        resolve();
+      },
+    );
+  });
+});

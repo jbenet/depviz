@@ -15,17 +15,17 @@ Getters['dummy'] = dummyGetter.GetNodes.bind(dummyGetter);
 Canonicalizers['github.com'] = CanonicalGitHubKey;
 Getters['github.com'] = GetGitHubNodes;
 
-function getSize() {
-  return {
-    height: window.innerHeight - HeaderHeight,
-    width: window.innerWidth,
-  }
-}
-
 export class DepGraphView extends Component {
+  getSize() {
+    return {
+      height: window.innerHeight - HeaderHeight,
+      width: window.innerWidth,
+    }
+  }
+
   render() {
     return <DepGraph
-      getSize={getSize}
+      getSize={this.getSize.bind(this)}
       getNodes={GetNodes} canonicalKey={CanonicalKey}
       slugs={[this.props.params.splat]} />
   }

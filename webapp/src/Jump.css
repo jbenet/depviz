@@ -1,8 +1,11 @@
-.Jump div {
-  width: 100%;
+.Jump {
+  float: right;
+  height: 40px;
 }
 
 .Jump form {
-  padding: 1em;
-  text-align: center;
+  padding-left: 1ex;
+  padding-right: 1ex;
+  line-height: 36px;
+  vertical-align: middle;
 }
