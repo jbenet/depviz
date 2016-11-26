@@ -13,22 +13,19 @@ class DepGraph extends PureComponent {
 
   componentDidMount() {
     this.nodes();
-    if (this.props.getInitialNodes) {
-      this.props.getInitialNodes(this.pushNodes.bind(this));
-    }
   }
 
   nodes() {
-    if (!this.props.getNode) {
-      throw new Error('getNode unset');
+    if (!this.props.getNodes) {
+      throw new Error('getNodes unset');
     }
     if (!this.props.canonicalKey) {
       throw new Error('canonicalKey unset');
     }
-    for (var index in (this.props.slugs || [])) {
+    for (var index in this.props.slugs) {
       if (true) {
         var key = this.props.slugs[index];
-        this.getNode(key);
+        this.getNodes(key);
       }
     }
   }
@@ -56,7 +53,7 @@ class DepGraph extends PureComponent {
           for (var i in parents) {
             if (true) {
               var relatedKey = parents[i];
-              this.getNode(relatedKey);
+              this.getNodes(relatedKey);
             }
           }
         }
@@ -64,16 +61,14 @@ class DepGraph extends PureComponent {
     }
   }
 
-  getNode(key) {
+  getNodes(key) {
     var _this = this;
     key = this.props.canonicalKey(key);
     this.setState(function (prevState) {
       if (prevState.nodes[key] || prevState.pending[key]) {
         return prevState;
       }
-      _this.props.getNode(key).then(function (node) {
-        _this.pushNodes([node]);
-      });
+      _this.props.getNodes(key, _this.pushNodes.bind(_this));
       var pending = {...prevState.pending};
       pending[key] = true;
       return {...prevState, pending: pending};
@@ -82,17 +77,14 @@ class DepGraph extends PureComponent {
 
   /* Properties:
    *
-   * * slugs, (optional) roots for the issue graph.  An array of
-   *   strings, like:
+   * * slugs, roots for the issue graph.  An array of strings, like:
    *   ['github.com/jbenet/depviz#1', 'gitlab.com/foo/bar#123']
-   * * getInitialNodes(pushNodes), (optional) a callback for resolving
-   *   initial nodes.  pushNodes takes an array of nodes and may be
-   *   called multiple times.
    * * width, the width of the graph viewport in pixels.
    * * height, the height of the graph viewport in pixels.
    * * canonicalKey(key) -> key, a callback for canonicalizing node
    *   names.
-   * * getNode(key) -> Node, a callback for resolving nodes.
+   * * getNodes(key, pushNodes) -> [Node, ...], a callback for
+   *   resolving nodes.
    */
   render() {
     var _this = this;

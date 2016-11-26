@@ -3,21 +3,39 @@ import DepCard from './DepCard';
 
 const gh = new GitHub(); /* unauthenticated client */
 
-export function CanonicalGitHubKey(key) {
-  var match = /^github\.com\/([^\/#]+)\/([^\/#]+)(\/|\/issues\/|\/pull\/|)(#?)([0-9]+)$/.exec(key);
+function parseKey(key) {
+  var match = /^github\.com\/([^\/#]+)(\/?)([^\/#]*)(\/|\/issues\/|\/pull\/|)(#?)([0-9]*)$/.exec(key);
   if (!match) {
     throw new Error('unrecognized GitHub key: ' + key);
   }
-  var user = match[1];
-  var repo = match[2];
-  var spacer = match[3];
-  var hash = match[4]
-  var number = parseInt(match[5], 10);
-  if (spacer && hash) {
+  var data = {user: match[1]};
+  var spacer1 = match[2];
+  if (match[3]) {
+    data.repo = match[3];
+  }
+  var spacer2 = match[4];
+  var hash = match[5]
+  if (match[6]) {
+    data.number = parseInt(match[6], 10);
+  }
+  if ((!spacer1 && data.repo) ||
+      (!data.repo && (spacer2 || hash)) ||
+      (spacer2 && hash)) {
     throw new Error('unrecognized GitHub key: ' + key);
   }
+  return data;
+}
 
-  return 'github.com/' + user + '/' + repo + '#' + number;
+export function CanonicalGitHubKey(key) {
+  var data = parseKey(key);
+  key = 'github.com/' + data.user;
+  if (data.repo) {
+    key += '/' + data.repo;
+  }
+  if (data.number) {
+    key += '#' + data.number;
+  }
+  return key;
 }
 
 function nodeFromIssue(issue) {
@@ -27,11 +45,6 @@ function nodeFromIssue(issue) {
   // FIXME: look for related too
   var match;
   match = /^.*\/([^\/]+)\/([^\/]+)$/.exec(issue.repository_url);
-  if (match === null) {
-    throw new Error(
-      'unrecognized repository URL format: ' + issue.repository_url
-    );
-  }
   var issueUser = match[1];
   var issueRepo = match[2];
   var key = 'github.com/' + issueUser + '/' + issueRepo + '#' + issue.number;
@@ -65,31 +78,32 @@ function nodeFromIssue(issue) {
   });
 }
 
-function GetGitHubNode(key) {
-  var match = /^github\.com\/([^\/]*)\/([^\/]*)#([0-9]*)$/.exec(key);
-  if (!match) {
-    throw new Error('unrecognized GitHub key: ' + key);
+function GetGitHubNodes(key, pushNodes) {
+  var data = parseKey(key);
+  if (data.repo === undefined) {
+    return gh.search().forIssues({
+      q: `assignee:${data.user} is:open`,
+    }).then(function (issues) {
+      var nodes = issues.data.map(nodeFromIssue);
+      pushNodes(nodes);
+    });
   }
-  var user = match[1];
-  var repo = match[2];
-  var number = parseInt(match[3], 10);
-  return gh.getIssues(
-    user, repo
-  ).getIssue(
-    number
-  ).then(function (issue) {
-    return nodeFromIssue(issue.data);
-  });
-}
-
-export function GetGitHubRepoNodes(user, repo, pushNodes) {
-    gh.getIssues(
-      user, repo
+  if (data.number === undefined) {
+    return gh.getIssues(
+      data.user, data.repo
     ).listIssues(
     ).then(function (issues) {
       var nodes = issues.data.map(nodeFromIssue);
       pushNodes(nodes);
     });
   }
+  return gh.getIssues(
+    data.user, data.repo
+  ).getIssue(
+    data.number
+  ).then(function (issue) {
+    pushNodes([nodeFromIssue(issue.data)]);
+  });
+}
 
-export default GetGitHubNode;
+export default GetGitHubNodes;

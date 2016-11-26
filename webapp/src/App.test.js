@@ -1,35 +1,3 @@
-jest.mock('github-api', () => {
-  class GitHub {
-    getIssues(user, repo) {
-      return new Issues(user, repo);
-    }
-  }
-
-  class Issues {
-    constructor(user, repo) {
-      this._user = user;
-      this._repo = repo;
-    }
-
-    getIssue(number) {
-      return Promise.resolve({
-        data: {
-          body: '',
-          html_url: 'https://github.com/' +
-            this._user + '/' + this._repo + '/issues/' + number,
-          state: number < 10 ? 'open' : 'closed',
-          title: 'Some title for ' + number,
-          user: {
-            login: 'author' + number,
-          },
-        }
-      });
-    }
-  }
-
-  return jest.fn(() => new GitHub());
-});
-
 import React from 'react';
 import ReactDOM from 'react-dom';
 import { hashHistory } from 'react-router'
@@ -40,10 +8,10 @@ it('home page renders without crashing', () => {
   ReactDOM.render(<App />, div);
 });
 
-it('DepGraphView renders without crashing', () => {
+it('issue view renders without crashing', () => {
   const div = document.createElement('div');
   ReactDOM.render(
-    <DepGraphView params={{'splat': 'dummy/jbenet/depviz/1'}} />,
+    <DepGraphView params={{'splat': 'dummy/jbenet/depviz/30'}} />,
     div
   );
 });
@@ -54,10 +22,26 @@ it('entering graph view normalizes non-canonical paths', () => {
     <App />,
     div,
     function () {
-      hashHistory.push('/http/dummy/jbenet/depviz/issues/1');
+      hashHistory.push('/http/dummy/jbenet/depviz/issues/31');
       expect(
         hashHistory.getCurrentLocation().pathname
-      ).toBe('/http/dummy/jbenet/depviz/1');
+      ).toBe('/http/dummy/jbenet/depviz/31');
     },
+  );
+});
+
+it('repo view renders without crashing', () => {
+  const div = document.createElement('div');
+  ReactDOM.render(
+    <DepGraphView params={{'splat': 'github.com/jbenet/depviz'}} />,
+    div
+  );
+});
+
+it('user view renders without crashing', () => {
+  const div = document.createElement('div');
+  ReactDOM.render(
+    <DepGraphView params={{'splat': 'github.com/jbenet'}} />,
+    div
   );
 });

@@ -1,21 +1,21 @@
 export var Canonicalizers = {};
 export var Getters = {};
 
-function handle(key, handlers) {
+function handler(key, handlers) {
   const host = key.split('/', 1)[0];
   const handler = handlers[host];
   if (!handler) {
     throw new Error('unrecognized key host: ' + key);
   }
-  return handler(key);
+  return handler;
 }
 
 export function CanonicalKey(key) {
-  return handle(key, Canonicalizers);
+  return handler(key, Canonicalizers)(key);
 }
 
-function GetNode(key) {
-  return handle(key, Getters);
+function GetNodes(key, pushNodes) {
+  return handler(key, Getters)(key, pushNodes);
 }
 
-export default GetNode;
+export default GetNodes;
