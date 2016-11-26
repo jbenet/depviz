@@ -44,12 +44,19 @@ class Graph extends PureComponent {
   }
 
   userCoord(x, y, gvTranslateX, gvTranslateY, gvWidth, gvHeight) {
+    var userWidth = 0;
+    var userHeight = 0;
+    if (this.props.getSize) {
+      const size = this.props.getSize();
+      userWidth = size.width / this.props.scale;
+      userHeight = size.height / this.props.scale;
+    }
     x += gvTranslateX - gvWidth / 2;
     y += gvTranslateY - gvHeight / 2;
     x *= 0.15;
     y *= 0.15;
-    x += this.userWidth() / 2;
-    y += this.userHeight() / 2;
+    x += userWidth / 2;
+    y += userHeight / 2;
     return {x: x, y: y};
   }
 
@@ -150,18 +157,10 @@ class Graph extends PureComponent {
     }
   }
 
-  userWidth() {
-    return this.props.width / this.props.scale;
-  }
-
-  userHeight() {
-    return this.props.height / this.props.scale;
-  }
-
   /* Properties:
    *
-   * * width, the width of the graph viewport in pixels.
-   * * height, the height of the graph viewport in pixels.
+   * * getSize() -> {width: ..., height: ...}, (optional) callback for
+   *   getting the graph viewport in pixels.
    * * scale, the ratio between viewport pixels and user units.
    * * nodes, an object with name keys and node values.  Nodes must
    *   support:
@@ -175,7 +174,7 @@ class Graph extends PureComponent {
   render() {
     var positioned = this.positionNodes(this.props.nodes);
     return <DraggableSVG
-        width={this.props.width} height={this.props.height}
+        getSize={this.props.getSize}
         scale={this.props.scale}>
       {this.props.children}
       {positioned.edges.map(this.props.renderEdge)}

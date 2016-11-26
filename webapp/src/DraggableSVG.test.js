@@ -4,9 +4,8 @@ import DraggableSVG from './DraggableSVG';
 
 it('renders without crashing', () => {
   const div = document.createElement('div');
-
   ReactDOM.render(
-    <DraggableSVG width={800} height={600} scale={10}>
+    <DraggableSVG scale={10}>
       <rect x={40} y={30} width={6} height={2}
         style={{fillOpacity: '0.1'}}>
       </rect>
@@ -20,7 +19,7 @@ it('drag and drop shifts viewBox', () => {
   return new Promise(
     function (resolve, reject) {
       ReactDOM.render(
-        <DraggableSVG width={800} height={600} scale={10}>
+        <DraggableSVG scale={10}>
           <rect x={40} y={30} width={6} height={2}
             style={{fillOpacity: '0.1'}}>
           </rect>
@@ -48,6 +47,40 @@ it('drag and drop shifts viewBox', () => {
           expect(this.state.dy).toBe(-6);
           this.stopDrag();
           expect(this.state.start).toBe(null);
+          resolve();
+        },
+      );
+    },
+  );
+});
+
+it('mount / unmount cleans up resize event listener', () => {
+  const div = document.createElement('div');
+  var getSize = jest.fn();
+  getSize.mockReturnValueOnce({width: 100, height: 100})
+    .mockReturnValueOnce({width: 200, height: 200})
+    .mockReturnValueOnce({width: 300, height: 300})
+    .mockReturnValueOnce({width: 400, height: 400});
+  return new Promise(
+    function (resolve, reject) {
+      ReactDOM.render(
+        <DraggableSVG getSize={getSize} scale={10}>
+          <rect x={40} y={30} width={6} height={2}
+            style={{fillOpacity: '0.1'}}>
+          </rect>
+        </DraggableSVG>,
+        div,
+        function () {
+          expect(this.state.width).toBe(200);
+          expect(this.state.height).toBe(200);
+          var event = new Event('resize');
+          window.dispatchEvent(event);
+          expect(this.state.width).toBe(300);
+          expect(this.state.height).toBe(300);
+          this.componentWillUnmount();
+          window.dispatchEvent(event);
+          expect(this.state.width).toBe(300);
+          expect(this.state.height).toBe(300);
           resolve();
         },
       );

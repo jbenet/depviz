@@ -79,8 +79,8 @@ class DepGraph extends PureComponent {
    *
    * * slugs, roots for the issue graph.  An array of strings, like:
    *   ['github.com/jbenet/depviz#1', 'gitlab.com/foo/bar#123']
-   * * width, the width of the graph viewport in pixels.
-   * * height, the height of the graph viewport in pixels.
+   * * getSize() -> {width: ..., height: ...}, (optional) callback for
+   *   getting the graph viewport in pixels.
    * * canonicalKey(key) -> key, a callback for canonicalizing node
    *   names.
    * * getNodes(key, pushNodes) -> [Node, ...], a callback for
@@ -100,8 +100,7 @@ class DepGraph extends PureComponent {
       return <path key={key} d={data.path} style={style} />
     }
     return <Graph
-      width={this.props.width}
-      height={this.props.height}
+      getSize={this.props.getSize}
       scale={10}
       renderNode={renderNode}
       renderEdge={renderEdge}

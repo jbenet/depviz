@@ -3,19 +3,50 @@ import React, { PureComponent } from 'react';
 class DraggableSVG extends PureComponent {
   constructor(props) {
     super(props);
+    var size;
+    if (this.props.getSize) {
+      size = this.props.getSize();
+    } else {
+      size = {width: 400, height: 400};
+    }
     this.state = {
+      width: size.width,
+      height: size.height,
       dx: 0,
       dy: 0,
       start: null,
     };
+    this.updateDimensions = this.updateDimensions.bind(this);
+  }
+
+  updateDimensions() {
+    var size;
+    if (this.props.getSize) {
+      size = this.props.getSize();
+    } else {
+      size = {width: 400, height: 400};
+    }
+    this.setState({width: size.width, height: size.height});
+  }
+
+  componentWillMount() {
+    this.updateDimensions();
+  }
+
+  componentDidMount() {
+    window.addEventListener('resize', this.updateDimensions);
+  }
+
+  componentWillUnmount() {
+    window.removeEventListener('resize', this.updateDimensions);
   }
 
   userWidth() {
-    return this.props.width / this.props.scale;
+    return this.state.width / this.props.scale;
   }
 
   userHeight() {
-    return this.props.height / this.props.scale;
+    return this.state.height / this.props.scale;
   }
 
   viewBox() {
@@ -65,13 +96,13 @@ class DraggableSVG extends PureComponent {
 
   /* Properties:
    *
-   * * width, the width of the graph viewport in pixels.
-   * * height, the height of the graph viewport in pixels.
+   * * getSize() -> {width: ..., height: ...}, (optional) callback for
+   *   getting the graph viewport in pixels.
    * * scale, the ratio between viewport pixels and user units.
    */
   render() {
     return <svg xmlns="http://www.w3.org/2000/svg"
-      width={this.props.width} height={this.props.height}
+      width={this.state.width} height={this.state.height}
       viewBox={this.viewBox()} fontSize="1"
       onMouseDown={this.startDrag.bind(this)}
       onMouseUp={this.stopDrag.bind(this)}
