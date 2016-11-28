@@ -66,6 +66,20 @@ function nodeFromIssue(issue) {
     var relatedKey = 'github.com/' + user + '/' + repo + '#' + number;
     dependencies.push(relatedKey);
   }
+  var tasks = 0;
+  var tasksCompleted = 0;
+  regexp = /^[^[]*\[([ x])].*$/gm;
+  for (;;) {
+    match = regexp.exec(issue.body);
+    if (match === null) {
+      break;
+    }
+    var check = match[1];
+    if (check === 'x') {
+      tasksCompleted += 1;
+    }
+    tasks += 1;
+  }
   return new DepCard({
     slug: key,
     host: 'github.com',
@@ -74,6 +88,8 @@ function nodeFromIssue(issue) {
     done: issue.state !== 'open',
     dependencies: dependencies,
     related: related,
+    tasks: tasks,
+    tasksCompleted: tasksCompleted,
     user: issue.user.login,
   });
 }
