@@ -70,3 +70,17 @@ it('example.com host crashes', () => {
     svg
   )).toThrowError('unrecognized host: example.com');
 });
+
+it('blocker count with some completed dependencies', () => {
+  var node = new DepCard({
+    slug: 'test',
+    dependencies: ['dep1', 'dep2']
+  });
+  var nodes = {
+    'dep1': new DepCard({
+      slug: 'dep1',
+      done: false,
+    }),
+  };
+  expect(node.blockerCount(nodes)).toBe(1);
+});

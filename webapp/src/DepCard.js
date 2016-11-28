@@ -14,6 +14,20 @@ class DepCard extends PureComponent {
     return this.props.dependencies ? this.props.dependencies.length : 0;
   }
 
+  blockerCount(nodes) {
+    var count = 0;
+    for (var index in (this.props.dependencies || [])) {
+      if (true) {
+        var key = this.props.dependencies[index];
+        if (nodes[key] !== undefined &&
+            !nodes[key].props.done) {
+          count += 1;
+        }
+      }
+    }
+    return count;
+  }
+
   relatedCount() {
     return this.props.related ? this.props.related.length : 0;
   }
@@ -38,7 +52,7 @@ class DepCard extends PureComponent {
       host={this.props.host}
       title={this.props.title}
       href={this.props.href}
-      blockers={this.props.blockers}
+      blockers={this.blockerCount(nodes || {})}
       dependencies={this.dependencyCount()}
       related={this.relatedCount()}
       dependents={this.dependentCount(nodes || {})}
