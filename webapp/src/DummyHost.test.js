@@ -36,13 +36,29 @@ it('dummy key fetches without crashing', () => {
       }
     }
   }
-  return dummyGetter.GetNodes(
-    'dummy/jbenet/depviz#3', pushNodes
-  ).then(function () {
-    return dummyGetter.GetNodes('dummy/jbenet/depviz#5', pushNodes);
-  }).then(function () {
-    return dummyGetter.GetNodes('dummy/jbenet/depviz#7', pushNodes);
-  }).then(function () {
-    return dummyGetter.GetNodes('dummy/jbenet/depviz#10', pushNodes);
-  });
+  return dummyGetter.GetNodes('dummy/jbenet/depviz#3', pushNodes);
+});
+
+it('repo key fetches without crashing', () => {
+  var nodes = [];
+  function pushNodes(newNodes) {
+    for (var index in newNodes) {
+      if (true) {
+        nodes.push(newNodes[index]);
+      }
+    }
+  }
+  return dummyGetter.GetNodes('dummy/jbenet/depviz', pushNodes);
+});
+
+it('user key fetches without crashing', () => {
+  var nodes = [];
+  function pushNodes(newNodes) {
+    for (var index in newNodes) {
+      if (true) {
+        nodes.push(newNodes[index]);
+      }
+    }
+  }
+  return dummyGetter.GetNodes('dummy/jbenet', pushNodes);
 });
