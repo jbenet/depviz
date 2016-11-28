@@ -97,6 +97,8 @@ class GetDummyHostNodes {
       done: done(data.number),
       dependencies: dependencies(data.number),
       related: [],
+      tasks: Math.max(10, data.number),
+      tasksCompleted: data.number,
       user: 'author' + data.number,
     })
   }

@@ -91,6 +91,27 @@ it('long and short references are understood', () => {
   });
 });
 
+it('tasks are counted', () => {
+  var nodes = [];
+  function pushNodes(newNodes) {
+    for (var index in newNodes) {
+      if (true) {
+        nodes.push(newNodes[index]);
+      }
+    }
+  }
+  return new Promise(function (resolve, reject) {
+    GetGitHubNodes(
+     'github.com/jbenet/depviz#20', pushNodes
+    ).then(function () {
+      expect(nodes.length).toBe(1);
+      expect(nodes[0].props.tasks).toBe(2);
+      expect(nodes[0].props.tasksCompleted).toBe(1);
+      resolve();
+    }).catch(reject);
+  });
+});
+
 it('repository keys are understood', () => {
   var nodes = [];
   function pushNodes(newNodes) {

@@ -48,11 +48,14 @@ class Issues {
         return [];
       }
     };
-
+    var bodyLines = dependencies(number).map(function (dep) {
+      return 'depends on ' + dep;
+    });
+    bodyLines.push('');
+    bodyLines.push('- [ ] an uncompleted task');
+    bodyLines.push('- [x] a completed task');
     return {
-      body: dependencies(number).map(function (dep) {
-        return 'depends on ' + dep;
-      }).join('\n') + '\n',
+      body: bodyLines.join('\n') + '\n',
       html_url: `https://github.com/${this._user}/${this._repo}/issues/${number}`,
       number: number,
       repository_url: `https://api.github.com/repos/${this._user}/${this._repo}`,

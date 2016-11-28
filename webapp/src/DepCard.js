@@ -56,23 +56,31 @@ class DepCard extends PureComponent {
       dependencies={this.dependencyCount()}
       related={this.relatedCount()}
       dependents={this.dependentCount(nodes || {})}
-      done={this.props.done} />
+      done={this.props.done}
+      tasks={this.props.tasks}
+      tasksCompleted={this.props.tasksCompleted}
+      user={this.props.user} />
   }
 
   render() {
     var width = 15;
     var height = 3;
+    var radius = 0.5;
     var color = Neutral;
     var style = {
       fill: color,
-      fillOpacity: '0.1',
+      fillOpacity: 0.1,
       stroke: this.props.done ? Green : Red,
       strokeWidth: 0.2,
     };
     var backgroundStyle = {
       fill: 'white',
-      stroke: 'white',
-      strokeWidth: 0.1,
+      stroke: 'none',
+    };
+    var taskStyle = {
+      fill: Green,
+      fillOpacity: 0.1,
+      stroke: 'none',
     };
     var logo, host;
     if (this.props.host === 'asana.com') {
@@ -87,31 +95,55 @@ class DepCard extends PureComponent {
     } else {
       throw new Error('unrecognized host: ' + this.props.host);
     }
+    var taskRatio = 1;
+    if (this.props.tasks) {
+      taskRatio = this.props.tasksCompleted / this.props.tasks;
+    } else {
+      taskStyle.fill = 'white';
+    }
+    var left = this.props.cx - width/2;
+    var right = this.props.cx + width/2;
+    var leftCenter = left + radius;
+    var rightTask = left + width * taskRatio;
+    var top = this.props.cy - height/2;
+    var bottom = this.props.cy + height/2;
+    var topCenter = top + radius;
+    var bottomCenter = bottom - radius;
+    var taskPath = [
+      `M ${left} ${topCenter}`,
+      `A ${radius} ${radius} 0 0 1 ${leftCenter} ${top}`,
+      `L ${rightTask} ${top}`,
+      `L ${rightTask} ${bottom}`,
+      `L ${leftCenter} ${bottom}`,
+      `A ${radius} ${radius} 0 0 1 ${left} ${bottomCenter}`,
+      `Z`,
+    ];
     return <g className="DepCard" xmlnsXlink="http://www.w3.org/1999/xlink">
       <rect
-        x={this.props.cx - width/2} y={this.props.cy - height/2}
-        width={width} height={height} rx="0.5" ry="0.5" style={backgroundStyle}>
+        x={left} y={top} width={width} height={height}
+        rx={radius} ry={radius} style={backgroundStyle}>
       </rect>
-      <rect
-        x={this.props.cx - width/2} y={this.props.cy - height/2}
-        width={width} height={height} rx="0.5" ry="0.5" style={style}>
-      </rect>
+      <path d={taskPath.join(' ')} style={taskStyle} />
       <a xlinkHref={host}>
         <image
-          x={this.props.cx - width/2 + 0.5} y={this.props.cy - 0.4 * height}
+          x={leftCenter} y={this.props.cy - 0.4 * height}
           width={0.8 * height} height={0.8 * height}
           xlinkHref={logo}>
         </image>
       </a>
       <a xlinkHref={this.props.href}>
         <text
-          x={this.props.cx - width/2 + 0.5 + height}
+          x={leftCenter + height}
           y={this.props.cy - height/2 + 1.5}>
           {this.props.slug.replace(/^[^\/]*\//, '')}
         </text>
       </a>
+      <rect
+        x={left} y={top} width={width} height={height}
+        rx={radius} ry={radius} style={style}>
+      </rect>
       <DepIndicators
-        cx={this.props.cx + width/2} cy={this.props.cy} dy={height/2}
+        cx={right} cy={this.props.cy} dy={height/2}
         blockers={this.props.blockers}
         dependencies={this.props.dependencies}
         related={this.props.related}

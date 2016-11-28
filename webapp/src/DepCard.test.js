@@ -2,7 +2,6 @@ import React from 'react';
 import ReactDOM from 'react-dom';
 import DepCard from './DepCard';
 
-
 it('asana.com renders without crashing', () => {
   const svg = document.createElement('svg');
   ReactDOM.render(
