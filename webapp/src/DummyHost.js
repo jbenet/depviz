@@ -89,8 +89,12 @@ class GetDummyHostNodes {
       user: 'author' + number,
     })
 
-    pushNodes([node]);
-    return Promise.resolve([node]);
+    return new Promise(function (resolve, reject) {
+      window.setTimeout(function() {
+        pushNodes([node]);
+        resolve([node]);
+      }, 10);
+    });
   }
 }
 
