@@ -1,0 +1,14 @@
+.Home {
+  padding-left: 1em;
+  padding-right: 1em;
+}
+
+.Home-logo {
+  height: 2em;
+  vertical-align: middle;
+  padding-right: 0.5em;
+}
+
+.Home h2 {
+  font-size: large;
+}

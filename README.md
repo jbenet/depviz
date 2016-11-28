@@ -10,7 +10,6 @@ This is a tool I do not have time to create fully, but need very much for [the I
 
 If you have shipped open source software and/or UX-heavy web apps before, please help! I am also willing to pay for this work to have it done very soon (can do a contracting gig). Reach out via this repo, or email me.
 
-
 ## Mockups
 
 #### [depviz.mocks.pdf](./mocks/depviz.mocks.pdf)

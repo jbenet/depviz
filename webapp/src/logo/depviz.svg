@@ -1,0 +1,14 @@
+<svg xmlns="http://www.w3.org/2000/svg"
+    width="77" height="34" viewBox="0 0 77 34" fontSize="12">
+  <g fill="white" stroke="white">
+    <rect x="1" y="7" width="65" height="20" rx="2" ry="2" fill="none"></rect>
+    <g stroke-width="0">
+      <circle cx="66" cy="7" r="7"></circle>
+      <circle cx="70" cy="17" r="7"></circle>
+      <circle cx="66" cy="27" r="7"></circle>
+    </g>
+    <text x="5" y="22" font-family="Arial, sans-serif" stroke="none">
+      depviz
+    </text>
+  </g>
+</svg>

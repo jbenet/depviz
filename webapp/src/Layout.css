@@ -1,0 +1,9 @@
+.Layout-header {
+  background-color: #222;
+  color: white;
+	padding: 2px; /* sync with HeaderHeight */
+}
+
+.Layout-logo {
+  height: 36px; /* sync with HeaderHeight */
+}
