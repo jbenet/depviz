@@ -124,6 +124,10 @@ class DepCard extends PureComponent {
         rx={radius} ry={radius} style={backgroundStyle}>
       </rect>
       <path d={taskPath.join(' ')} style={taskStyle} />
+      <rect
+        x={left} y={top} width={width} height={height}
+        rx={radius} ry={radius} style={style}>
+      </rect>
       <a xlinkHref={host}>
         <image
           x={leftCenter} y={this.props.cy - 0.4 * height}
@@ -138,10 +142,6 @@ class DepCard extends PureComponent {
           {this.props.slug.replace(/^[^\/]*\//, '')}
         </text>
       </a>
-      <rect
-        x={left} y={top} width={width} height={height}
-        rx={radius} ry={radius} style={style}>
-      </rect>
       <DepIndicators
         cx={right} cy={this.props.cy} dy={height/2}
         blockers={this.props.blockers}
