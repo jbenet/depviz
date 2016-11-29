@@ -1,0 +1,14 @@
+sudo: false
+language: node_js
+node_js:
+  - node
+cache:
+  directories:
+    - node_modules
+install:
+  - (cd webapp && npm install)
+script:
+  - bash -c 'set -e -o pipefail; (cd webapp && CI=1 npm test -- --coverage) | tee test.out'
+  - sed -n 's/All files *| *\([0-9][0-9.]*\) .*/\1/p' test.out >coverage
+  - cat coverage
+  - test 100 = $(cat coverage)
