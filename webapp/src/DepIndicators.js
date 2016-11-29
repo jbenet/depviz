@@ -8,6 +8,7 @@ class DepIndicator extends PureComponent {
       strokeWidth: 0,
     };
     return <g className="DepIndicator">
+      <title>{this.props.title}</title>
       <circle cx={this.props.cx} cy={this.props.cy} r="1" style={style}>
           </circle>
       <text x={this.props.cx} y={this.props.cy}
@@ -20,16 +21,18 @@ class DepIndicator extends PureComponent {
 
 class DependenciesIndicator extends PureComponent {
   render() {
-    var count, color;
+    var count, color, title;
     if (this.props.blockers) {
       count = this.props.blockers;
       color = Red;
+      title = `${count} blockers (of ${this.props.dependencies} dependencies)`;
     } else {
       count = this.props.dependencies;
       color = Green;
+      title = `${this.props.dependencies} dependencies (no blockers)`;
     }
     return <DepIndicator
-      cx={this.props.cx} cy={this.props.cy}
+      title={title} cx={this.props.cx} cy={this.props.cy}
       count={count} color={color} />
   }
 }
@@ -37,6 +40,7 @@ class DependenciesIndicator extends PureComponent {
 class RelatedIndicator extends PureComponent {
   render() {
     return <DepIndicator
+      title={`${this.props.related} related issues`}
       cx={this.props.cx} cy={this.props.cy}
       count={this.props.related} color={Neutral} />
   }
@@ -49,6 +53,7 @@ class DependentsIndicator extends PureComponent {
       color = this.props.done ? Green : Red;
     }
     return <DepIndicator
+      title={`${this.props.dependents} dependent issues`}
       cx={this.props.cx} cy={this.props.cy}
       count={this.props.dependents} color={color} />
   }
