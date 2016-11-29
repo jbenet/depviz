@@ -15,6 +15,28 @@ class DepGraph extends PureComponent {
     this.nodes();
   }
 
+  componentWillReceiveProps(nextProps) {
+    if (nextProps.slugs !== this.props.slugs) {
+      for (var index in nextProps.slugs) {
+        if (true) {
+          var key = nextProps.slugs[index];
+          key = this.props.canonicalKey(key);
+          if (!this.state.nodes[key]) {
+            var _this = this;
+            this.setState(
+              {
+                nodes: {},
+                pending: {},
+              },
+              _this.nodes
+            );
+            return;
+          }
+        }
+      }
+    }
+  }
+
   nodes() {
     if (!this.props.getNodes) {
       throw new Error('getNodes unset');
