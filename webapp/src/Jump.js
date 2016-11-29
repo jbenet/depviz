@@ -36,7 +36,7 @@ class Jump extends PureComponent {
   handleSubmit(event) {
     event.preventDefault();
     if (this.state.value) {
-      this.props.push('http/' + this.state.value.replace(/#/g, '/'));
+      this.props.push('/http/' + this.state.value.replace(/#/g, '/'));
     }
   }
 
