@@ -23,10 +23,18 @@ export class DepGraphView extends Component {
     }
   }
 
+  getNodes(key, pushNodes) {
+    var expanded = (
+      this.props.location &&
+      this.props.location.query.expanded === 'true'
+    );
+    return GetNodes(key, pushNodes, {expanded: expanded});
+  }
+
   render() {
     return <DepGraph
       getSize={this.getSize.bind(this)}
-      getNodes={GetNodes} canonicalKey={CanonicalKey}
+      getNodes={this.getNodes.bind(this)} canonicalKey={CanonicalKey}
       slugs={[this.props.params.splat]} />
   }
 }

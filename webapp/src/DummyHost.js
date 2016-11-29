@@ -41,7 +41,7 @@ class GetDummyHostNodes {
     this.calls = {};
   }
 
-  _getIssue(key) {
+  _getIssue(key, props) {
     var data = parseKey(key);
     if (this.calls[key]) {
       //throw new Error('duplicate call for ' + key);
@@ -90,6 +90,7 @@ class GetDummyHostNodes {
     };
 
     return new DepCard({
+      ...props,
       slug: key,
       host: 'github.com', /* because we need a logo */
       title: 'dummy ' + key,
@@ -97,24 +98,29 @@ class GetDummyHostNodes {
       done: done(data.number),
       dependencies: dependencies(data.number),
       related: [],
+      comments: data.number % 2 ? undefined : data.number,
       tasks: Math.max(10, data.number),
       tasksCompleted: data.number,
-      user: 'author' + data.number,
+      labels: data.number % 2 ? undefined : [{name: 'bug', 'color': '#ee0701'}],
+      people: [{
+        name: 'assignee' + data.number,
+        url: 'https://example.com/assignee' + data.number,
+      }],
     })
   }
 
-  GetNodes(key, pushNodes) {
+  GetNodes(key, pushNodes, props) {
     var data = parseKey(key);
     var nodes;
     if (data.number === undefined) {
       nodes = [
-        this._getIssue('dummy/jbenet/depviz#1'),
-        this._getIssue('dummy/jbenet/depviz#5'),
-        this._getIssue('dummy/jbenet/depviz#7'),
-        this._getIssue('dummy/jbenet/depviz#10'),
+        this._getIssue('dummy/jbenet/depviz#1', props),
+        this._getIssue('dummy/jbenet/depviz#5', props),
+        this._getIssue('dummy/jbenet/depviz#7', props),
+        this._getIssue('dummy/jbenet/depviz#10', props),
       ];
     } else {
-      nodes = [this._getIssue(key)];
+      nodes = [this._getIssue(key, props)];
     }
 
     return new Promise(function (resolve, reject) {

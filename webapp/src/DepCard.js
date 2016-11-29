@@ -57,15 +57,26 @@ class DepCard extends PureComponent {
       related={this.relatedCount()}
       dependents={this.dependentCount(nodes || {})}
       done={this.props.done}
+      comments={this.props.comments}
       tasks={this.props.tasks}
       tasksCompleted={this.props.tasksCompleted}
-      user={this.props.user} />
+      labels={this.props.labels}
+      people={this.props.people}
+      expanded={this.props.expanded} />
   }
 
   render() {
-    var width = 15;
-    var height = 3;
+    var width, height, comments, labels, people, tasks, title;
+    var imageHeight = 1.5;
+    var lineSep = 1.2;
     var radius = 0.5;
+    if (this.props.expanded) {
+      width = 24;
+      height = imageHeight + 2 * lineSep + 2 * radius;
+    } else {
+      width = 15;
+      height = Math.max(imageHeight + 2 * radius, 3);
+    }
     var color = Neutral;
     var style = {
       fill: color,
@@ -104,6 +115,8 @@ class DepCard extends PureComponent {
     var left = this.props.cx - width/2;
     var right = this.props.cx + width/2;
     var leftCenter = left + radius;
+    var rightCenter = right - radius;
+    var rightColumn = rightCenter - 4;
     var rightTask = left + width * taskRatio;
     var top = this.props.cy - height/2;
     var bottom = this.props.cy + height/2;
@@ -118,6 +131,57 @@ class DepCard extends PureComponent {
       `A ${radius} ${radius} 0 0 1 ${left} ${bottomCenter}`,
       `Z`,
     ];
+    if (this.props.expanded) {
+      title = <g>
+        <title>{this.props.title}</title>
+        <text x={leftCenter} y={topCenter + imageHeight + lineSep}>
+          {this.props.title}
+        </text>
+      </g>
+      if (this.props.labels) {
+        // FIXME: wrap in boxes using getComputedTextLength
+        labels = this.props.labels.map(function (label) {
+          return <tspan key={label.name} style={{fill: label.color}}>
+            {label.name}
+          </tspan>
+        });
+        labels = <g>
+          <text x={leftCenter} y={topCenter + imageHeight + 2 * lineSep}>
+            {labels}
+          </text>
+        </g>
+      }
+      if (this.props.people) {
+        people = this.props.people.slice(0, 1).map(function (person) {
+          var image;
+          if (person.avatar) {
+            image = <image
+              x={rightColumn} y={topCenter}
+              width={imageHeight} height={imageHeight}
+              xlinkHref={person.avatar}>
+            </image>
+          } else {
+            image = <text x={rightColumn} y={topCenter + lineSep}>
+              😐
+            </text>
+          }
+          return <a key={person.name} xlinkHref={person.url}>
+            <title>{person.name}</title>
+            {image}
+          </a>
+        });
+      }
+      if (this.props.comments) {
+        comments = <text x={rightColumn} y={topCenter + imageHeight + lineSep}>
+          🗪{this.props.comments}
+        </text>
+      }
+      if (this.props.tasks) {
+        tasks = <text x={rightColumn} y={topCenter + imageHeight + 2 * lineSep}>
+          ☑{this.props.tasksCompleted}/{this.props.tasks}
+        </text>
+      }
+    }
     return <g className="DepCard" xmlnsXlink="http://www.w3.org/1999/xlink">
       <rect
         x={left} y={top} width={width} height={height}
@@ -130,18 +194,23 @@ class DepCard extends PureComponent {
       </rect>
       <a xlinkHref={host}>
         <image
-          x={leftCenter} y={this.props.cy - 0.4 * height}
-          width={0.8 * height} height={0.8 * height}
+          x={leftCenter} y={topCenter}
+          width={imageHeight} height={imageHeight}
           xlinkHref={logo}>
         </image>
       </a>
       <a xlinkHref={this.props.href}>
         <text
-          x={leftCenter + height}
-          y={this.props.cy - height/2 + 1.5}>
+          x={leftCenter + imageHeight + 0.4}
+          y={topCenter + 1}>
           {this.props.slug.replace(/^[^\/]*\//, '')}
         </text>
       </a>
+      {title}
+      {labels}
+      {people}
+      {comments}
+      {tasks}
       <DepIndicators
         cx={right} cy={this.props.cy} dy={height/2}
         blockers={this.props.blockers}
