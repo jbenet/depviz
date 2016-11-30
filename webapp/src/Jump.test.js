@@ -38,7 +38,7 @@ it('submit event jumps to the value', () => {
       this.handleChange({target: {value: 'foo'}});
       this.handleSubmit({preventDefault: jest.fn()});
       expect(push).toHaveBeenCalledTimes(1);
-      expect(push).toHaveBeenCalledWith('http/foo');
+      expect(push).toHaveBeenCalledWith('/http/foo');
     }
   );
 });
