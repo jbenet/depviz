@@ -94,7 +94,7 @@ class DepGraph extends PureComponent {
     var renderEdge = function(data) {
       var key = data.node1.props.slug + '-' + data.node2.props.slug;
       var style = {
-        stroke: data.node1.done ? Green : Red,
+        stroke: data.node1.props.done ? Green : Red,
         strokeWidth: 0.2,
       };
       return <path key={key} d={data.path} style={style} />
