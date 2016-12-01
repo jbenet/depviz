@@ -23,19 +23,37 @@ export class DepGraphView extends Component {
     }
   }
 
-  getNodes(key, pushNodes) {
-    var expanded = (
+  expanded() {
+    return (
       this.props.location &&
       this.props.location.query.expanded === 'true'
     );
-    return GetNodes(key, pushNodes, {expanded: expanded});
+  }
+
+  getNodes(key, pushNodes) {
+    return GetNodes(key, pushNodes, {expanded: this.expanded()});
+  }
+
+  handleKeyPress(event) {
+    if (event.key === 'e' && !this.expanded()) {
+      this.props.router.replace({
+        pathname: this.props.location.pathname,
+        query: {expanded: 'true'},
+      });
+    } else if (event.key === 'c' && this.expanded()) {
+      this.props.router.replace({
+        pathname: this.props.location.pathname,
+        query: null,
+      });
+    }
   }
 
   render() {
     return <DepGraph
       getSize={this.getSize.bind(this)}
       getNodes={this.getNodes.bind(this)} canonicalKey={CanonicalKey}
-      slugs={[this.props.params.splat]} />
+      slugs={[this.props.params.splat]}
+      onKeyPress={this.handleKeyPress.bind(this)} />
   }
 }
 

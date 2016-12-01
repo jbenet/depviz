@@ -99,21 +99,24 @@ class DraggableSVG extends PureComponent {
    * * getSize() -> {width: ..., height: ...}, (optional) callback for
    *   getting the graph viewport in pixels.
    * * scale, the ratio between viewport pixels and user units.
+   * * onKeyPress(event), (optional) callback for keypress events.
    */
   render() {
-    return <svg xmlns="http://www.w3.org/2000/svg"
-      width={this.state.width} height={this.state.height}
-      viewBox={this.viewBox()} fontSize="1"
-      onMouseDown={this.startDrag.bind(this)}
-      onMouseUp={this.stopDrag.bind(this)}
-      onMouseOut={this.stopDrag.bind(this)}
-      onMouseMove={this.handleDrag.bind(this)}
-      onTouchStart={this.startDrag.bind(this)}
-      onTouchMove={this.handleDrag.bind(this)}
-      onTouchEnd={this.stopDrag.bind(this)}
-      onTouchCancel={this.stopDrag.bind(this)}>
-    {this.props.children}
-   </svg>
+    return <div tabIndex="1" onKeyPress={this.props.onKeyPress}>
+      <svg xmlns="http://www.w3.org/2000/svg"
+          width={this.state.width} height={this.state.height}
+          viewBox={this.viewBox()} fontSize="1"
+          onMouseDown={this.startDrag.bind(this)}
+          onMouseUp={this.stopDrag.bind(this)}
+          onMouseOut={this.stopDrag.bind(this)}
+          onMouseMove={this.handleDrag.bind(this)}
+          onTouchStart={this.startDrag.bind(this)}
+          onTouchMove={this.handleDrag.bind(this)}
+          onTouchEnd={this.stopDrag.bind(this)}
+          onTouchCancel={this.stopDrag.bind(this)}>
+        {this.props.children}
+      </svg>
+    </div>
   }
 }
 

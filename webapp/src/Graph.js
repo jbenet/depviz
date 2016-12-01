@@ -170,12 +170,14 @@ class Graph extends PureComponent {
    *   renders a node in the graph.
    * * renderEdge({node1: ..., node2: ..., path: ...), a method which
    *   renders an edge in the graph.
+   * * onKeyPress(event), (optional) callback for keypress events.
    */
   render() {
     var positioned = this.positionNodes(this.props.nodes);
     return <DraggableSVG
         getSize={this.props.getSize}
-        scale={this.props.scale}>
+        scale={this.props.scale}
+        onKeyPress={this.props.onKeyPress}>
       {this.props.children}
       {positioned.edges.map(this.props.renderEdge)}
       {positioned.nodes.map(this.props.renderNode)}
