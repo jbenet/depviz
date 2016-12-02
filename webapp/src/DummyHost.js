@@ -101,7 +101,10 @@ class GetDummyHostNodes {
       comments: data.number % 2 ? undefined : data.number,
       tasks: Math.max(10, data.number),
       tasksCompleted: data.number,
-      labels: data.number % 2 ? undefined : [{name: 'bug', 'color': '#ee0701'}],
+      labels: data.number % 2 ? undefined : [
+        {name: 'bug', 'color': '#ee0701'},
+        {name: 'help wanted', 'color': '#84b6eb'},
+      ],
       people: [{
         name: 'assignee' + data.number,
         url: 'https://example.com/assignee' + data.number,
