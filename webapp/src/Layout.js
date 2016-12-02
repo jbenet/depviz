@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { Link } from 'react-router'
+import Link from 'react-router/lib/Link';
 import logo from './logo/depviz.svg';
 import Jump from './Jump';
 import './Layout.css';
