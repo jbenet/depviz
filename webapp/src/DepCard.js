@@ -67,6 +67,7 @@ class DepCard extends PureComponent {
 
   render() {
     var width, height, comments, labels, people, tasks, title;
+    var additionalIDTitle;
     var imageHeight = 1.5;
     var lineSep = 1.2;
     var radius = 0.5;
@@ -181,6 +182,8 @@ class DepCard extends PureComponent {
           ☑{this.props.tasksCompleted}/{this.props.tasks}
         </text>
       }
+    } else { /* collapsed */
+      additionalIDTitle = '\n' + this.props.title;
     }
     return <g className="DepCard" xmlnsXlink="http://www.w3.org/1999/xlink">
       <rect
@@ -200,6 +203,9 @@ class DepCard extends PureComponent {
         </image>
       </a>
       <a xlinkHref={this.props.href}>
+        <title>
+          {this.props.slug}{additionalIDTitle}
+        </title>
         <text
           x={leftCenter + imageHeight + 0.4}
           y={topCenter + 1}>
