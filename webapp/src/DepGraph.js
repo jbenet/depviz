@@ -107,6 +107,7 @@ class DepGraph extends PureComponent {
    *   names.
    * * getNodes(key, pushNodes) -> [Node, ...], a callback for
    *   resolving nodes.
+   * * onKeyPress(event), (optional) callback for keypress events.
    */
   render() {
     var _this = this;
@@ -126,7 +127,8 @@ class DepGraph extends PureComponent {
       scale={10}
       renderNode={renderNode}
       renderEdge={renderEdge}
-      nodes={this.state.nodes} />
+      nodes={this.state.nodes}
+      onKeyPress={this.props.onKeyPress} />
   }
 }
 

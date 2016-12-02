@@ -61,9 +61,18 @@ class Issues {
       repository_url: `https://api.github.com/repos/${this._user}/${this._repo}`,
       state: number < 10 ? 'open' : 'closed',
       title: 'Some title for ' + number,
+      comments: number % 2 ? 0 : number,
+      labels: number % 2 ? [] : [{name: 'bug', 'color': '#ee0701'}],
       user: {
-        login: 'author' + number,
+        login: 'assignee' + number,
+        avatar_url: number % 2 ? undefined : 'https://avatars.githubusercontent.com/u/138401?v=3',
+        html_url: 'https://github.com/assignee' + number,
       },
+      assignees: number % 3 ? [] : [{
+        login: 'assignee' + number,
+        avatar_url: 'https://avatars.githubusercontent.com/u/138401?v=3',
+        html_url: 'https://github.com/assignee' + number,
+      }],
     };
   }
 

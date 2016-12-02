@@ -1,6 +1,6 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
-import { hashHistory } from 'react-router'
+import { hashHistory } from 'react-router';
 import App, { DepGraphView } from './App';
 
 it('home page renders without crashing', () => {
@@ -43,5 +43,28 @@ it('user view renders without crashing', () => {
   ReactDOM.render(
     <DepGraphView params={{'splat': 'github.com/jbenet'}} />,
     div
+  );
+});
+
+it('expand/collapse key presses render without crashing', () => {
+  const div = document.createElement('div');
+  var location = {
+    pathname: '/http/github.com/jbenet/depviz',
+    query: {},
+  };
+  var replace = function (loc) {
+    location.pathname = loc.pathname;
+    location.query = loc.query;
+  }
+  ReactDOM.render(
+    <DepGraphView router={{replace: replace}} location={location}
+      params={{'splat': 'github.com/jbenet/depviz'}} />,
+    div,
+    function () {
+      this.handleKeyPress({key: 'e'});
+      expect(location.query.expanded).toBe('true');
+      this.handleKeyPress({key: 'c'});
+      expect(location.query).toBe(null);
+    },
   );
 });

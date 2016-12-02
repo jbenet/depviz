@@ -14,8 +14,8 @@ export function CanonicalKey(key) {
   return handler(key, Canonicalizers)(key);
 }
 
-function GetNodes(key, pushNodes) {
-  return handler(key, Getters)(key, pushNodes);
+function GetNodes(key, pushNodes, props) {
+  return handler(key, Getters)(key, pushNodes, props);
 }
 
 export default GetNodes;

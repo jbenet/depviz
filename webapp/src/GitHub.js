@@ -38,7 +38,7 @@ export function CanonicalGitHubKey(key) {
   return key;
 }
 
-function nodeFromIssue(issue) {
+function nodeFromIssue(issue, props) {
   var dependencies = [];
   var related = [];
   var regexp = /^depends +on +(?:([^ ]+)\/)?(?:([^ ]+))?(?:#([0-9]+)) *$/gim;
@@ -80,7 +80,30 @@ function nodeFromIssue(issue) {
     }
     tasks += 1;
   }
+  var labels = issue.labels.map(function (label) {
+    return {
+      name: label.name,
+      color: '#' + label.color,
+    }
+  });
+  var people;
+  if (issue.assignees.length) {
+    people = issue.assignees.map(function (user) {
+      return {
+        name: user.login,
+        url: user.html_url,
+        avatar: user.avatar_url,
+      }
+    });
+  } else {
+    people = [{
+      name: issue.user.login,
+      url: issue.user.html_url,
+      avatar: issue.user.avatar_url,
+    }];
+  }
   return new DepCard({
+    ...props,
     slug: key,
     host: 'github.com',
     title: issue.title,
@@ -88,19 +111,23 @@ function nodeFromIssue(issue) {
     done: issue.state !== 'open',
     dependencies: dependencies,
     related: related,
+    comments: issue.comments,
     tasks: tasks,
     tasksCompleted: tasksCompleted,
-    user: issue.user.login,
+    labels: labels,
+    people: people,
   });
 }
 
-function GetGitHubNodes(key, pushNodes) {
+function GetGitHubNodes(key, pushNodes, props) {
   var data = parseKey(key);
   if (data.repo === undefined) {
     return gh.search().forIssues({
       q: `assignee:${data.user} is:open`,
     }).then(function (issues) {
-      var nodes = issues.data.map(nodeFromIssue);
+      var nodes = issues.data.map(function (issue) {
+        return nodeFromIssue(issue, props);
+      });
       pushNodes(nodes);
     });
   }
@@ -109,7 +136,9 @@ function GetGitHubNodes(key, pushNodes) {
       data.user, data.repo
     ).listIssues(
     ).then(function (issues) {
-      var nodes = issues.data.map(nodeFromIssue);
+      var nodes = issues.data.map(function (issue) {
+        return nodeFromIssue(issue, props);
+      });
       pushNodes(nodes);
     });
   }
@@ -118,7 +147,7 @@ function GetGitHubNodes(key, pushNodes) {
   ).getIssue(
     data.number
   ).then(function (issue) {
-    pushNodes([nodeFromIssue(issue.data)]);
+    pushNodes([nodeFromIssue(issue.data, props)]);
   });
 }
 
