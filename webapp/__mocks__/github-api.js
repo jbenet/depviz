@@ -62,7 +62,10 @@ class Issues {
       state: number < 10 ? 'open' : 'closed',
       title: 'Some title for ' + number,
       comments: number % 2 ? 0 : number,
-      labels: number % 2 ? [] : [{name: 'bug', 'color': '#ee0701'}],
+      labels: number % 2 ? [] : [
+        {name: 'bug', 'color': '#ee0701'},
+        {name: 'help wanted', 'color': '#84b6eb'},
+      ],
       user: {
         login: 'assignee' + number,
         avatar_url: number % 2 ? undefined : 'https://avatars.githubusercontent.com/u/138401?v=3',

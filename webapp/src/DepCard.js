@@ -146,6 +146,9 @@ class DepCard extends PureComponent {
             {label.name}
           </tspan>
         });
+        for (var i = labels.length - 1; i > 0; i--) {
+          labels.splice(i, 0, ' ');
+        }
         labels = <g>
           <text x={leftCenter} y={topCenter + imageHeight + 2 * lineSep}>
             {labels}
