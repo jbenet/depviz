@@ -1,5 +1,8 @@
 import React, { Component } from 'react';
-import { Router, IndexRoute, Route, hashHistory } from 'react-router'
+import Router from 'react-router/lib/Router';
+import IndexRoute from 'react-router/lib/IndexRoute';
+import Route from 'react-router/lib/Route';
+import hashHistory from 'react-router/lib/hashHistory';
 import './App.css';
 import DepGraph from './DepGraph';
 import GetDummyHostNodes, { CanonicalDummyHostKey } from './DummyHost';

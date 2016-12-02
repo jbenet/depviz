@@ -1,6 +1,6 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
-import { hashHistory } from 'react-router';
+import hashHistory from 'react-router/lib/hashHistory';
 import App, { DepGraphView } from './App';
 
 it('home page renders without crashing', () => {

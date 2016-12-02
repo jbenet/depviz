@@ -1,5 +1,5 @@
 import React, { PureComponent } from 'react';
-import { Link } from 'react-router'
+import Link from 'react-router/lib/Link';
 import github from './logo/github.svg';
 import './Home.css';
 
