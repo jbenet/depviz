@@ -12,3 +12,13 @@ script:
   - sed -n 's/All files *| *\([0-9][0-9.]*\) .*/\1/p' test.out >coverage
   - cat coverage
   - test 100 = $(cat coverage)
+  - (cd webapp && npm run build)
+
+deploy:
+  - provider: pages
+    github-token:
+      secure: CREvCtbgvsLTC7nCFD5FZbo5F3PwcoEnzCHLmVYeTYWvW8RbAN4oWx28V8fVW/GZq3Gt4gniF9HMKSE+eCe2+d/6+l1UPFbHLGdUangXjdnsLkoBNEm2HdyO5k3NpVCPoK6pIcuOGLaLjqxX7ctKGvjkjOGKwfpsbfCGyUzwOB65wF5jzlQ4uY0luYBKF2tuwd+YS7tB9Sc4Wv2u12BpHGFX7GGMkTDEKklCNhfDcRxBgaJn922WGvXZNae0yhs986BjztooCNyiB1fJthRpG95haITX5/ucJ33EyBOe5ZbLEwgBxYQxKSu0/LJ8pfQn2JTowxABkqG9YePyPNmPbMVdiWT4NKinPR7eDxXXgiNT0M/sHOdD+TVUVNDS6MFg7RJeFOB1XU0us8OgdLx5eu0KHMnXSb87DxARSi78JWKPkpNsp+cDD16ey98el9pNkvqYC3TkthA4NMMOdaMt4b7QHgLDuqtJSY6N9h1iv5cGzNTHhKsDvJURz07jwVSrXpnpn/U0tMaT7B3CguP0uofLCkp5M15d9cLxBHaCoMF6sZmheybfHryHX2OOphIMMLC0BNigFT+tHDTbxY072vOAhLHb6u1RKw53wDZipm1RF6S+bAk/fL79jbjt3NtFKGtn4paBeZ/rLDq1y70Oh8nk7jgOJ6UeCMOBivDwXXY=
+    local-dir: webapp/build
+    skip-cleanup: true
+    on:
+      branch: master
