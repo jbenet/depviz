@@ -4,8 +4,46 @@ import github from './logo/github.svg';
 import './Home.css';
 
 class Home extends PureComponent {
+  constructor(props) {
+    super(props);
+    var size;
+    if (this.props.getSize) {
+      size = this.props.getSize();
+    } else {
+      size = {width: 400, height: 400};
+    }
+    this.state = {
+      width: size.width,
+      height: size.height,
+    };
+    this.updateDimensions = this.updateDimensions.bind(this);
+  }
+
+  updateDimensions() {
+    var size;
+    if (this.props.getSize) {
+      size = this.props.getSize();
+    } else {
+      size = {width: 400, height: 400};
+    }
+    this.setState({width: size.width, height: size.height});
+  }
+
+  componentWillMount() {
+    this.updateDimensions();
+  }
+
+  componentDidMount() {
+    window.addEventListener('resize', this.updateDimensions);
+  }
+
+  componentWillUnmount() {
+    window.removeEventListener('resize', this.updateDimensions);
+  }
+
   render() {
-    return <div className="Home">
+    return <div className="Home"
+        style={{height: this.state.height, width: this.state.width - 20}}>
       <h2 id="identifiers">Identifiers</h2>
 
       <p>

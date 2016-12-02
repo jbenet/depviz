@@ -16,6 +16,14 @@ it('issue view renders without crashing', () => {
   );
 });
 
+it('issue view renders without crashing', () => {
+  const div = document.createElement('div');
+  ReactDOM.render(
+    <DepGraphView params={{'splat': 'dummy/jbenet/depviz/30'}} />,
+    div
+  );
+});
+
 it('entering graph view normalizes non-canonical paths', () => {
   const div = document.createElement('div');
   ReactDOM.render(

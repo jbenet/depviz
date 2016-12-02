@@ -15,14 +15,20 @@ Getters['dummy'] = dummyGetter.GetNodes.bind(dummyGetter);
 Canonicalizers['github.com'] = CanonicalGitHubKey;
 Getters['github.com'] = GetGitHubNodes;
 
-export class DepGraphView extends Component {
-  getSize() {
-    return {
-      height: window.innerHeight - HeaderHeight,
-      width: window.innerWidth,
-    }
+function getSize() {
+  return {
+    height: window.innerHeight - HeaderHeight,
+    width: window.innerWidth,
   }
+}
 
+export class HomeView extends Component {
+  render() {
+    return <Home getSize={getSize} />
+  }
+}
+
+export class DepGraphView extends Component {
   expanded() {
     return (
       this.props.location &&
@@ -50,7 +56,7 @@ export class DepGraphView extends Component {
 
   render() {
     return <DepGraph
-      getSize={this.getSize.bind(this)}
+      getSize={getSize}
       getNodes={this.getNodes.bind(this)} canonicalKey={CanonicalKey}
       slugs={[this.props.params.splat]}
       onKeyPress={this.handleKeyPress.bind(this)} />
@@ -73,7 +79,7 @@ class App extends Component {
       <div className="App">
         <Router history={hashHistory}>
           <Route path="/" component={Layout}>
-            <IndexRoute component={Home} />
+            <IndexRoute component={HomeView} />
             <Route path="/http/*" component={DepGraphView}
               onEnter={enterGraphView} />
           </Route>

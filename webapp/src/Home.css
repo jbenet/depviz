@@ -1,6 +1,7 @@
 .Home {
-  padding-left: 1em;
-  padding-right: 1em;
+  padding-left: 10px;
+  padding-right: 10px;
+  overflow-y: auto;
 }
 
 .Home-logo {
