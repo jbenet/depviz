@@ -65,6 +65,16 @@ class DepCard extends PureComponent {
       expanded={this.props.expanded} />
   }
 
+  id(suffix) {
+    var name = this.props.slug
+      .replace(/^[^:A-Z_a-z]/g, '_')
+      .replace(/[^:A-Z_a-z-.0-9]+/g, '_');
+    if (suffix) {
+      name += suffix;
+    }
+    return name;
+  }
+
   render() {
     var width, height, comments, labels, people, tasks, title;
     var additionalIDTitle;
@@ -132,14 +142,37 @@ class DepCard extends PureComponent {
       `A ${radius} ${radius} 0 0 1 ${left} ${bottomCenter}`,
       `Z`,
     ];
+    var idClipPath;
+    if (this.props.expanded && this.props.people) {
+      idClipPath = 'url(#' + this.id('_left_column') + ')';
+    } else {
+      idClipPath = 'url(#' + this.id('_full_width') + ')';
+    }
+
     if (this.props.expanded) {
+      var titleClipPath;
+      if (this.props.comments) {
+        titleClipPath = 'url(#' + this.id('_left_column') + ')';
+      } else {
+        titleClipPath = 'url(#' + this.id('_full_width') + ')';
+      }
       title = <g>
         <title>{this.props.title}</title>
-        <text x={leftCenter} y={topCenter + imageHeight + lineSep}>
+        <text x={leftCenter} y={topCenter + imageHeight + lineSep}
+            clipPath={titleClipPath}>
           {this.props.title}
         </text>
       </g>
       if (this.props.labels) {
+        var labelsClipPath;
+        if (this.props.tasks) {
+          labelsClipPath = 'url(#' + this.id('_left_column') + ')';
+        } else {
+          labelsClipPath = 'url(#' + this.id('_full_width') + ')';
+        }
+        var labelTitle = this.props.labels.map(function (label) {
+          return label.name;
+        }).join('\n');
         // FIXME: wrap in boxes using getComputedTextLength
         labels = this.props.labels.map(function (label) {
           return <tspan key={label.name} style={{fill: label.color}}>
@@ -149,7 +182,8 @@ class DepCard extends PureComponent {
         for (var i = labels.length - 1; i > 0; i--) {
           labels.splice(i, 0, ' ');
         }
-        labels = <g>
+        labels = <g clipPath={labelsClipPath}>
+          <title>{labelTitle}</title>
           <text x={leftCenter} y={topCenter + imageHeight + 2 * lineSep}>
             {labels}
           </text>
@@ -189,6 +223,12 @@ class DepCard extends PureComponent {
       additionalIDTitle = '\n' + this.props.title;
     }
     return <g className="DepCard" xmlnsXlink="http://www.w3.org/1999/xlink">
+      <clipPath id={this.id('_full_width')}>
+        <rect x={left} y={top} width={width} height={height} />
+      </clipPath>
+      <clipPath id={this.id('_left_column')}>
+        <rect x={left} y={top} width={rightColumn - left} height={height} />
+      </clipPath>
       <rect
         x={left} y={top} width={width} height={height}
         rx={radius} ry={radius} style={backgroundStyle}>
@@ -210,8 +250,9 @@ class DepCard extends PureComponent {
           {this.props.slug}{additionalIDTitle}
         </title>
         <text
-          x={leftCenter + imageHeight + 0.4}
-          y={topCenter + 1}>
+            x={leftCenter + imageHeight + 0.4}
+            y={topCenter + 1}
+            clipPath={idClipPath}>
           {this.props.slug.replace(/^[^\/]*\//, '')}
         </text>
       </a>
