@@ -2,7 +2,7 @@ import React, { PureComponent } from 'react';
 import asana from './logo/asana.svg';
 import github from './logo/github.svg';
 import gitlab from './logo/gitlab.svg';
-import { Red, Green, Neutral } from './Color';
+import { Bad, Good, Neutral } from './Color';
 import DepIndicators from './DepIndicators';
 
 class DepCard extends PureComponent {
@@ -82,7 +82,7 @@ class DepCard extends PureComponent {
     var style = {
       fill: color,
       fillOpacity: 0.1,
-      stroke: this.props.done ? Green : Red,
+      stroke: this.props.done ? Good : Bad,
       strokeWidth: 0.2,
     };
     var backgroundStyle = {
@@ -90,7 +90,7 @@ class DepCard extends PureComponent {
       stroke: 'none',
     };
     var taskStyle = {
-      fill: Green,
+      fill: Good,
       fillOpacity: 0.1,
       stroke: 'none',
     };

@@ -1,6 +1,6 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
-import { Red, Green } from './Color';
+import { Bad, Good } from './Color';
 import DepIndicators, { DepIndicator } from './DepIndicators';
 
 it('thick renders without crashing', () => {
@@ -64,8 +64,8 @@ it('full pie renders without crashing', () => {
       cx={0} cy={0}
       title="testing pie.fraction == 1"
       count={3}
-      color={Red}
-      pie={{color: Green, fraction: 1}} />,
+      color={Bad}
+      pie={{color: Good, fraction: 1}} />,
     svg
   );
 });

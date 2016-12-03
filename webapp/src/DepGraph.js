@@ -1,5 +1,5 @@
 import React, { PureComponent } from 'react';
-import { Red, Green } from './Color';
+import { Bad, Good } from './Color';
 import Graph from './Graph';
 
 class DepGraph extends PureComponent {
@@ -117,7 +117,7 @@ class DepGraph extends PureComponent {
     var renderEdge = function(data) {
       var key = data.node1.props.slug + '-' + data.node2.props.slug;
       var style = {
-        stroke: data.node1.props.done ? Green : Red,
+        stroke: data.node1.props.done ? Good : Bad,
         strokeWidth: 0.2,
       };
       return <path key={key} d={data.path} style={style} />
