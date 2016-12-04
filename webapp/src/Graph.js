@@ -69,7 +69,7 @@ class Graph extends PureComponent {
     }
     var gv = this.graphviz(nodes);
     var svg = Viz(gv, {format: 'svg', engine: 'dot', scale: 2});
-    var g, index, json, name, node, node1, node2;
+    var g, index1, index2, json, name, node, node1, node2;
     xml2js.parseString(svg, function (err, result) {
       /* FIXME: handle errors */
       json = result;
@@ -95,9 +95,9 @@ class Graph extends PureComponent {
       if (true) {
         node = nodes[key];
         name = this.nodeName(key);
-        for (index in json.svg.g[0].g) {
+        for (index1 in json.svg.g[0].g) {
           if (true) {
-            g = json.svg.g[0].g[index];
+            g = json.svg.g[0].g[index1];
             if (g.title[0] === name) {
               var text = g.g[0].a[0].text[0].$;
               var coord = this.userCoord(
@@ -116,19 +116,18 @@ class Graph extends PureComponent {
       }
     }
     var edges = [];
-    for (var k1 in nodes) {
+    for (var k2 in nodes) {
       if (true) {
-        node1 = nodes[k1];
-        for (var k2 in nodes) {
+        node2 = nodes[k2];
+        var parents = node2.parents();
+        for (index1 in parents) {
           if (true) {
+            var k1 = parents[index1];
             name = this.edgeName(k1, k2);
-            node2 = nodes[k2];
-            if (k1 === k2) {
-              continue;
-            }
-            for (index in json.svg.g[0].g) {
+            node1 = nodes[k1];
+            for (index2 in json.svg.g[0].g) {
               if (true) {
-                g = json.svg.g[0].g[index];
+                g = json.svg.g[0].g[index2];
                 if (g.title[0] === name.replace('__to__', '->')) {
                   // FIXME: parse from g.g[0].a[0].path[0].$.d and
                   // g.g[0].a[0].polygon[0].$.points
