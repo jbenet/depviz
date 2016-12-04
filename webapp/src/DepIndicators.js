@@ -1,5 +1,5 @@
 import React, { PureComponent } from 'react';
-import { Red, Green, Neutral } from './Color';
+import { Bad, Good, Neutral } from './Color';
 
 export class DepIndicator extends PureComponent {
   render() {
@@ -50,15 +50,15 @@ class DependenciesIndicator extends PureComponent {
     var count, color, title, pie;
     if (this.props.blockers) {
       count = this.props.blockers;
-      color = Red;
+      color = Bad;
       title = `${count} blockers (of ${this.props.dependencies} dependencies)`;
       pie = {
-        color: Green,
+        color: Good,
         fraction: 1 - count / this.props.dependencies,
       };
     } else {
       count = this.props.dependencies;
-      color = Green;
+      color = Good;
       title = `${this.props.dependencies} dependencies (no blockers)`;
     }
     return <DepIndicator
@@ -80,7 +80,7 @@ class DependentsIndicator extends PureComponent {
   render() {
     var color = Neutral;
     if (this.props.dependents) {
-      color = this.props.done ? Green : Red;
+      color = this.props.done ? Good : Bad;
     }
     return <DepIndicator
       title={`${this.props.dependents} dependent issues`}

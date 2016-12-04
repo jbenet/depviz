@@ -1,3 +1,3 @@
-export var Red = "#C00";
-export var Green = "#0C0";
+export var Bad = "#C00";
+export var Good = "#0C0";
 export var Neutral = "#888";
