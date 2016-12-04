@@ -6,15 +6,15 @@ it('renders without crashing', () => {
   const div = document.createElement('div');
 
   var nodes = {
-    'a': {
+    a: {
       title: 'a',
       parents: function() {return [];},
     },
-    'b': {
+    b: {
       title: 'b',
       parents: function() {return ['a'];},
     },
-    'c': {
+    c: {
       title: 'c',
       parents: function() {return ['a', 'b'];},
     },

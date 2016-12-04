@@ -11,7 +11,7 @@ it('home page renders without crashing', () => {
 it('issue view renders without crashing', () => {
   const div = document.createElement('div');
   ReactDOM.render(
-    <DepGraphView params={{'splat': 'dummy/jbenet/depviz/30'}} />,
+    <DepGraphView params={{splat: 'dummy/jbenet/depviz/30'}} />,
     div
   );
 });
@@ -19,7 +19,7 @@ it('issue view renders without crashing', () => {
 it('issue view renders without crashing', () => {
   const div = document.createElement('div');
   ReactDOM.render(
-    <DepGraphView params={{'splat': 'dummy/jbenet/depviz/30'}} />,
+    <DepGraphView params={{splat: 'dummy/jbenet/depviz/30'}} />,
     div
   );
 });
@@ -41,7 +41,7 @@ it('entering graph view normalizes non-canonical paths', () => {
 it('repo view renders without crashing', () => {
   const div = document.createElement('div');
   ReactDOM.render(
-    <DepGraphView params={{'splat': 'github.com/jbenet/depviz'}} />,
+    <DepGraphView params={{splat: 'github.com/jbenet/depviz'}} />,
     div
   );
 });
@@ -49,7 +49,7 @@ it('repo view renders without crashing', () => {
 it('user view renders without crashing', () => {
   const div = document.createElement('div');
   ReactDOM.render(
-    <DepGraphView params={{'splat': 'github.com/jbenet'}} />,
+    <DepGraphView params={{splat: 'github.com/jbenet'}} />,
     div
   );
 });
@@ -66,7 +66,7 @@ it('expand/collapse key presses render without crashing', () => {
   }
   ReactDOM.render(
     <DepGraphView router={{replace: replace}} location={location}
-      params={{'splat': 'github.com/jbenet/depviz'}} />,
+      params={{splat: 'github.com/jbenet/depviz'}} />,
     div,
     function () {
       this.handleKeyPress({key: 'e'});

@@ -86,7 +86,7 @@ it('expanded renders without crashing', () => {
       tasks={5}
       tasksCompleted={3}
       comments={2}
-      labels={[{name: 'bug', 'color': '#ff0000'}]}
+      labels={[{name: 'bug', color: '#ff0000'}]}
       people={[{name: 'p1', url: 'https://example.com/p1'}]}
       expanded={true} />,
     svg
@@ -115,8 +115,8 @@ it('expanded with avatar renders without crashing', () => {
 it('expanded with multiple labels renders without crashing', () => {
   const svg = document.createElement('svg');
   const labels = [
-    {name: 'bug', 'color': '#ff0000'},
-    {name: 'help wanted', 'color': '#0000ff'},
+    {name: 'bug', color: '#ff0000'},
+    {name: 'help wanted', color: '#0000ff'},
   ];
   ReactDOM.render(
     <DepCard
@@ -168,7 +168,7 @@ it('blocker count with some completed dependencies', () => {
     dependencies: ['dep1', 'dep2']
   });
   var nodes = {
-    'dep1': new DepCard({
+    dep1: new DepCard({
       slug: 'dep1',
       done: false,
     }),

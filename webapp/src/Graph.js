@@ -152,8 +152,8 @@ class Graph extends PureComponent {
       }
     }
     return {
-      'edges': edges,
-      'nodes': positioned,
+      edges: edges,
+      nodes: positioned,
     }
   }
 
