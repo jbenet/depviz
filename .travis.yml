@@ -4,7 +4,7 @@ node_js:
   - node
 cache:
   directories:
-    - node_modules
+    - webapp/node_modules
 install:
   - (cd webapp && npm install)
 script:
