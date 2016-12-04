@@ -139,6 +139,29 @@ it('expanded with multiple labels renders without crashing', () => {
   );
 });
 
+it('expanded with no right column renders without crashing', () => {
+  const svg = document.createElement('svg');
+  const labels = [
+    {name: 'bug', 'color': '#ff0000'},
+    {name: 'help wanted', 'color': '#0000ff'},
+  ];
+  ReactDOM.render(
+    <DepCard
+      cx={40} cy={30}
+      host="github.com"
+      slug="github.com/jbenet/depviz#1"
+      title="depviz v0: single page rendering"
+      href="https://github.com/jbenet/depviz/issues/1"
+      dependencies={5}
+      related={1}
+      dependents={20}
+      done={false}
+      labels={labels}
+      expanded={true} />,
+    svg
+  );
+});
+
 it('blocker count with some completed dependencies', () => {
   var node = new DepCard({
     slug: 'test',
