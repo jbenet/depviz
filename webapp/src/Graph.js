@@ -61,6 +61,12 @@ class Graph extends PureComponent {
   }
 
   positionNodes(nodes) {
+    if (Object.keys(nodes).length === 0) {
+      return {
+        edges: [],
+        nodes: [],
+      };
+    }
     var gv = this.graphviz(nodes);
     var svg = Viz(gv, {format: 'svg', engine: 'dot', scale: 2});
     var g, index, json, name, node, node1, node2;
