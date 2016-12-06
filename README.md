@@ -45,6 +45,8 @@ If you have shipped open source software and/or UX-heavy web apps before, please
 
 PRs are accepted! Please dive in to [the issues](https://github.com/jbenet/depviz/issues), too.
 
+Please be aware that all interactions related to depviz are subject to the IPFS [Code of Conduct](https://github.com/ipfs/community/blob/master/code-of-conduct.md).
+
 ## License
 
 [MIT](LICENSE) © 2016 depviz contributors
