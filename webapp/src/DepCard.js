@@ -95,6 +95,9 @@ class DepCard extends PureComponent {
       stroke: this.props.done ? Good : Bad,
       strokeWidth: 0.2,
     };
+    if (!this.props.done && !this.props.blockers) {
+      style.strokeWidth *= 2;
+    }
     var backgroundStyle = {
       fill: 'white',
       stroke: 'none',
