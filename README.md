@@ -1,8 +1,8 @@
 # depviz - dependency visualizer for the web
 
-This is a repo to track the progress of "depviz", a tool to visualize dependencies of items on the web.
+> Dependency visualizer for the web https://jbenet.github.io/depviz
 
-This started as this discussion: https://github.com/jbenet/random-ideas/issues/37 -- see that thread for details on this. For now this repo is only mockups.
+depviz started as [this discussion](https://github.com/jbenet/random-ideas/issues/37) -- see that thread for details. For now, this repo is only mockups.
 
 ## Looking for Implementors!
 
@@ -40,3 +40,13 @@ If you have shipped open source software and/or UX-heavy web apps before, please
 ![](./mocks/images/depviz.mocks.011.jpg)
 ---
 ![](./mocks/images/depviz.mocks.012.jpg)
+
+## Contribute
+
+PRs are accepted! Please dive in to [the issues](https://github.com/jbenet/depviz/issues), too.
+
+Please be aware that all interactions related to depviz are subject to the IPFS [Code of Conduct](https://github.com/ipfs/community/blob/master/code-of-conduct.md).
+
+## License
+
+[MIT](LICENSE) © 2016 depviz contributors
