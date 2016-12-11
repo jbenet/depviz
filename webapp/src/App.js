@@ -40,7 +40,10 @@ export class DepGraphView extends Component {
   }
 
   getNodes(key, pushNodes) {
-    return GetNodes(key, pushNodes, {expanded: this.expanded()});
+    return GetNodes(key, pushNodes, {
+      expanded: this.expanded(),
+      getNodes: this.getNodes.bind(this),
+    });
   }
 
   handleKeyPress(event) {

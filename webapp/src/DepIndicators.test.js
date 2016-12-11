@@ -1,7 +1,7 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
 import { Bad, Good } from './Color';
-import DepIndicators, { DepIndicator } from './DepIndicators';
+import DepIndicators, { DependenciesIndicator, DepIndicator } from './DepIndicators';
 
 it('thick renders without crashing', () => {
   const svg = document.createElement('svg');
@@ -67,5 +67,31 @@ it('full pie renders without crashing', () => {
       color={Bad}
       pie={{color: Good, fraction: 1}} />,
     svg
+  );
+});
+
+it('dependencies walked without crashing', () => {
+  const svg = document.createElement('svg');
+  var nodes = [];
+  var getNodes = function(key, pushNodes) {
+    pushNodes([key]);
+  };
+  var pushNodes = function(nds) {
+    nodes = nodes.concat(nds);
+  };
+  ReactDOM.render(
+    <DependenciesIndicator
+      cx={0} cy={0}
+      title="testing pie.fraction == 1"
+      parents={['parent1', 'parent2']}
+      blockers={0}
+      dependencies={2}
+      getNodes={getNodes}
+      pushNodes={pushNodes} />,
+    svg ,
+    function () {
+      this.getDependencies();
+      expect(nodes).toEqual(['parent1', 'parent2']);
+    }
   );
 });

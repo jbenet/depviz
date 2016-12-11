@@ -44,7 +44,7 @@ class DepCard extends PureComponent {
     return count;
   }
 
-  depCard(cx, cy, nodes) {
+  depCard(cx, cy, nodes, pushNodes) {
     return <DepCard
       key={this.props.slug}
       cx={cx} cy={cy}
@@ -52,6 +52,7 @@ class DepCard extends PureComponent {
       host={this.props.host}
       title={this.props.title}
       href={this.props.href}
+      parents={this.parents()}
       blockers={this.blockerCount(nodes || {})}
       dependencies={this.dependencyCount()}
       related={this.relatedCount()}
@@ -62,7 +63,9 @@ class DepCard extends PureComponent {
       tasksCompleted={this.props.tasksCompleted}
       labels={this.props.labels}
       people={this.props.people}
-      expanded={this.props.expanded} />
+      expanded={this.props.expanded}
+      getNodes={this.props.getNodes}
+      pushNodes={pushNodes} />
   }
 
   id(suffix) {
@@ -225,6 +228,7 @@ class DepCard extends PureComponent {
     } else { /* collapsed */
       additionalIDTitle = '\n' + this.props.title;
     }
+    var unwalkedDependencies = this.props.done && this.props.parents.length;
     return <g className="DepCard" xmlnsXlink="http://www.w3.org/1999/xlink">
       <clipPath id={this.id('_full_width')}>
         <rect x={left} y={top} width={width} height={height} />
@@ -266,11 +270,14 @@ class DepCard extends PureComponent {
       {tasks}
       <DepIndicators
         cx={right} cy={this.props.cy} dy={height/2}
+        parents={this.props.parents}
         blockers={this.props.blockers}
         dependencies={this.props.dependencies}
         related={this.props.related}
         dependents={this.props.dependents}
-        done={this.props.done} />
+        done={this.props.done}
+        getNodes={unwalkedDependencies ? this.props.getNodes : undefined}
+        pushNodes={unwalkedDependencies ? this.props.pushNodes : undefined} />
     </g>
   }
 }

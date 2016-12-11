@@ -112,7 +112,8 @@ class DepGraph extends PureComponent {
   render() {
     var _this = this;
     var renderNode = function(data) {
-      return data.node.depCard(data.cx, data.cy, _this.state.nodes);
+      return data.node.depCard(
+        data.cx, data.cy, _this.state.nodes, _this.pushNodes.bind(_this));
     }
     var renderEdge = function(data) {
       var key = data.node1.props.slug + '-' + data.node2.props.slug;

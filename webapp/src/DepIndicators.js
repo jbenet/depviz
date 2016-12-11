@@ -5,13 +5,17 @@ export class DepIndicator extends PureComponent {
   render() {
     var pie;
     var radius = 1;
-    var style = {
+    var circleStyle = {
       fill: this.props.color,
       strokeWidth: 0,
     };
+    var groupStyle = {};
+    if (this.props.onClick) {
+      groupStyle.cursor = 'pointer';
+    }
     if (this.props.pie && this.props.pie.fraction) {
       if (this.props.pie.fraction === 1) {
-        style.fill = this.props.pie.color;
+        circleStyle.fill = this.props.pie.color;
       } else {
         var pieStyle= {
           fill: this.props.pie.color,
@@ -31,9 +35,11 @@ export class DepIndicator extends PureComponent {
         pie = <path d={pieD.join(' ')} style={pieStyle}></path>
       }
     }
-    return <g className="DepIndicator">
+    return <g className="DepIndicator"
+        style={groupStyle} onClick={this.props.onClick}>
       <title>{this.props.title}</title>
-      <circle cx={this.props.cx} cy={this.props.cy} r={radius} style={style}>
+      <circle
+        cx={this.props.cx} cy={this.props.cy} r={radius} style={circleStyle}>
       </circle>
       {pie}
       <text x={this.props.cx} y={this.props.cy}
@@ -45,9 +51,17 @@ export class DepIndicator extends PureComponent {
   }
 }
 
-class DependenciesIndicator extends PureComponent {
+export class DependenciesIndicator extends PureComponent {
+  getDependencies() {
+    for (var index in this.props.parents) {
+      if (Object.prototype.hasOwnProperty.call(this.props.parents, index)) {
+        this.props.getNodes(this.props.parents[index], this.props.pushNodes);
+      }
+    }
+  }
+
   render() {
-    var count, color, title, pie;
+    var count, color, title, pie, onClick;
     if (this.props.blockers) {
       count = this.props.blockers;
       color = Bad;
@@ -60,10 +74,13 @@ class DependenciesIndicator extends PureComponent {
       count = this.props.dependencies;
       color = Good;
       title = `${this.props.dependencies} dependencies (no blockers)`;
+      if (this.props.getNodes && this.props.pushNodes) {
+        onClick = this.getDependencies.bind(this);
+      }
     }
     return <DepIndicator
       title={title} cx={this.props.cx} cy={this.props.cy}
-      count={count} color={color} pie={pie} />
+      count={count} color={color} pie={pie} onClick={onClick} />
   }
 }
 
@@ -98,8 +115,11 @@ class DepIndicators extends PureComponent {
     return <g className="DepIndicators">
       <DependenciesIndicator
         cx={this.props.cx} cy={this.props.cy - this.props.dy}
+        parents={this.props.parents}
         blockers={this.props.blockers}
-        dependencies={this.props.dependencies} />
+        dependencies={this.props.dependencies}
+        getNodes={this.props.getNodes}
+        pushNodes={this.props.pushNodes} />
       <DependentsIndicator
         cx={this.props.cx} cy={this.props.cy + this.props.dy}
         dependents={this.props.dependents}
