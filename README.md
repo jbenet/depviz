@@ -1,6 +1,6 @@
 # depviz - dependency visualizer for the web
 
-> Dependency visualizer for the web https://jbenet.github.io/depviz
+> https://jbenet.github.io/depviz
 
 depviz started as [this discussion](https://github.com/jbenet/random-ideas/issues/37) -- see that thread for details. For now, this repo is only mockups.
 
