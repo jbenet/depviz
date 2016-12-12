@@ -31,7 +31,7 @@ it('dummy key fetches without crashing', () => {
   var nodes = [];
   function pushNodes(newNodes) {
     for (var index in newNodes) {
-      if (true) {
+      if (Object.prototype.hasOwnProperty.call(newNodes, index)) {
         nodes.push(newNodes[index]);
       }
     }
@@ -43,7 +43,7 @@ it('repo key fetches without crashing', () => {
   var nodes = [];
   function pushNodes(newNodes) {
     for (var index in newNodes) {
-      if (true) {
+      if (Object.prototype.hasOwnProperty.call(newNodes, index)) {
         nodes.push(newNodes[index]);
       }
     }
@@ -55,7 +55,7 @@ it('user key fetches without crashing', () => {
   var nodes = [];
   function pushNodes(newNodes) {
     for (var index in newNodes) {
-      if (true) {
+      if (Object.prototype.hasOwnProperty.call(newNodes, index)) {
         nodes.push(newNodes[index]);
       }
     }

@@ -18,7 +18,7 @@ class DepGraph extends PureComponent {
   componentWillReceiveProps(nextProps) {
     if (nextProps.slugs !== this.props.slugs) {
       for (var index in nextProps.slugs) {
-        if (true) {
+        if (Object.prototype.hasOwnProperty.call(nextProps.slugs, index)) {
           var key = nextProps.slugs[index];
           key = this.props.canonicalKey(key);
           if (!this.state.nodes[key]) {
@@ -45,7 +45,7 @@ class DepGraph extends PureComponent {
       throw new Error('canonicalKey unset');
     }
     for (var index in this.props.slugs) {
-      if (true) {
+      if (Object.prototype.hasOwnProperty.call(this.props.slugs, index)) {
         var key = this.props.slugs[index];
         this.getNodes(key);
       }
@@ -59,7 +59,7 @@ class DepGraph extends PureComponent {
       var stateNodes = {...prevState.nodes};
       var pending = {...prevState.pending};
       for (index in nodes) {
-        if (true) {
+        if (Object.prototype.hasOwnProperty.call(nodes, index)) {
           var node = nodes[index];
           stateNodes[node.props.slug] = node;
           delete pending[node.props.slug];
@@ -68,12 +68,12 @@ class DepGraph extends PureComponent {
       return {...prevState, nodes: stateNodes, pending: pending};
     });
     for (index in nodes) {
-      if (true) {
+      if (Object.prototype.hasOwnProperty.call(nodes, index)) {
         node = nodes[index];
         if (!node.props.done) {
           var parents = node.parents();
           for (var i in parents) {
-            if (true) {
+            if (Object.prototype.hasOwnProperty.call(parents, i)) {
               var relatedKey = parents[i];
               this.getNodes(relatedKey);
             }

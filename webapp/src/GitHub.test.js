@@ -53,7 +53,7 @@ it('foo/#3 reference is skipped without crashing', () => {
   var nodes = [];
   function pushNodes(newNodes) {
     for (var index in newNodes) {
-      if (true) {
+      if (Object.prototype.hasOwnProperty.call(newNodes, index)) {
         nodes.push(newNodes[index]);
       }
     }
@@ -73,7 +73,7 @@ it('long and short references are understood', () => {
   var nodes = [];
   function pushNodes(newNodes) {
     for (var index in newNodes) {
-      if (true) {
+      if (Object.prototype.hasOwnProperty.call(newNodes, index)) {
         nodes.push(newNodes[index]);
       }
     }
@@ -95,7 +95,7 @@ it('tasks are counted', () => {
   var nodes = [];
   function pushNodes(newNodes) {
     for (var index in newNodes) {
-      if (true) {
+      if (Object.prototype.hasOwnProperty.call(newNodes, index)) {
         nodes.push(newNodes[index]);
       }
     }
@@ -116,7 +116,7 @@ it('repository keys are understood', () => {
   var nodes = [];
   function pushNodes(newNodes) {
     for (var index in newNodes) {
-      if (true) {
+      if (Object.prototype.hasOwnProperty.call(newNodes, index)) {
         nodes.push(newNodes[index]);
       }
     }
@@ -135,7 +135,7 @@ it('user keys are understood', () => {
   var nodes = [];
   function pushNodes(newNodes) {
     for (var index in newNodes) {
-      if (true) {
+      if (Object.prototype.hasOwnProperty.call(newNodes, index)) {
         nodes.push(newNodes[index]);
       }
     }

@@ -19,19 +19,19 @@ class Graph extends PureComponent {
     ];
     var key, name, node;
     for (key in nodes) {
-      if (true) {
+      if (Object.prototype.hasOwnProperty.call(nodes, key)) {
         node = nodes[key];
         name = this.nodeName(key);
         gv.push('  node [href=' + name + '] ' + name + ';');
       }
     }
     for (key in nodes) {
-      if (true) {
+      if (Object.prototype.hasOwnProperty.call(nodes, key)) {
         node = nodes[key];
         name = this.nodeName(key);
         var parents = node.parents();
         for (var index in parents) {
-          if (true) {
+          if (Object.prototype.hasOwnProperty.call(parents, index)) {
             var parent = parents[index];
             var parentName = this.nodeName(parent);
             gv.push('  edge [href=' + this.edgeName(parent, key) + '] ' + parentName + ' -> ' + name + ';');
@@ -92,11 +92,11 @@ class Graph extends PureComponent {
     ));
     var positioned = [];
     for (var key in nodes) {
-      if (true) {
+      if (Object.prototype.hasOwnProperty.call(nodes, key)) {
         node = nodes[key];
         name = this.nodeName(key);
         for (index1 in json.svg.g[0].g) {
-          if (true) {
+          if (Object.prototype.hasOwnProperty.call(json.svg.g[0].g, index1)) {
             g = json.svg.g[0].g[index1];
             if (g.title[0] === name) {
               var text = g.g[0].a[0].text[0].$;
@@ -117,16 +117,16 @@ class Graph extends PureComponent {
     }
     var edges = [];
     for (var k2 in nodes) {
-      if (true) {
+      if (Object.prototype.hasOwnProperty.call(nodes, k2)) {
         node2 = nodes[k2];
         var parents = node2.parents();
         for (index1 in parents) {
-          if (true) {
+          if (Object.prototype.hasOwnProperty.call(parents, index1)) {
             var k1 = parents[index1];
             name = this.edgeName(k1, k2);
             node1 = nodes[k1];
             for (index2 in json.svg.g[0].g) {
-              if (true) {
+              if (Object.prototype.hasOwnProperty.call(json.svg.g[0].g, index2)) {
                 g = json.svg.g[0].g[index2];
                 if (g.title[0] === name.replace('__to__', '->')) {
                   // FIXME: parse from g.g[0].a[0].path[0].$.d and
