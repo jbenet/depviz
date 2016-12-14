@@ -1,6 +1,7 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
 import hashHistory from 'react-router/lib/hashHistory';
+import { GitHubAuthHistory } from 'github-api';
 import App, { DepGraphView } from './App';
 
 it('home page renders without crashing', () => {
@@ -25,6 +26,27 @@ it('leaving the config view clears ?back=...', () => {
       expect(
         hashHistory.getCurrentLocation().query
       ).toEqual({});
+    },
+  );
+});
+
+it('leaving the config view updates the GitHub token', () => {
+  const div = document.createElement('div');
+  ReactDOM.render(
+    <App />,
+    div,
+    function () {
+      hashHistory.push({
+        pathname: '/config',
+        query: {},
+      });
+      hashHistory.push({
+        pathname: '/config',
+        query: {'github-token': 'da39a3ee5e6b4b0d3255bfef95601890afd80709'},
+      });
+      expect(
+        GitHubAuthHistory[GitHubAuthHistory.length - 1]
+      ).toEqual({'token': 'da39a3ee5e6b4b0d3255bfef95601890afd80709'});
     },
   );
 });

@@ -7,7 +7,7 @@ import './App.css';
 import Config from './Config';
 import DepGraph from './DepGraph';
 import GetDummyHostNodes, { CanonicalDummyHostKey } from './DummyHost';
-import GetGitHubNodes, { CanonicalGitHubKey } from './GitHub';
+import GetGitHubNodes, { CanonicalGitHubKey, SetGitHubAuth } from './GitHub';
 import GetNodes, { Canonicalizers, Getters, CanonicalKey } from './GetNodes';
 import Home from './Home';
 import Layout, { HeaderHeight } from './Layout';
@@ -35,6 +35,13 @@ function changeView(prevState, nextState, replace) {
     replace({
       pathname: nextState.location.pathname,
       query: query,
+    });
+  }
+
+  if (prevState.location.query['github-token'] !==
+      nextState.location.query['github-token']) {
+    SetGitHubAuth({
+      token: nextState.location.query['github-token'],
     });
   }
 }
