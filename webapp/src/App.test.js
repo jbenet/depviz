@@ -8,11 +8,24 @@ it('home page renders without crashing', () => {
   ReactDOM.render(<App />, div);
 });
 
-it('issue view renders without crashing', () => {
+it('leaving the config view clears ?back=...', () => {
   const div = document.createElement('div');
   ReactDOM.render(
-    <DepGraphView params={{splat: 'dummy/jbenet/depviz/30'}} />,
-    div
+    <App />,
+    div,
+    function () {
+      hashHistory.push({
+        pathname: '/config',
+        query: {back: '/http/dummy/jbenet'},
+      });
+      hashHistory.push({
+        pathname: '/',
+        query: {back: '/http/dummy/jbenet'},
+      });
+      expect(
+        hashHistory.getCurrentLocation().query
+      ).toEqual({});
+    },
   );
 });
 
@@ -72,7 +85,7 @@ it('expand/collapse key presses render without crashing', () => {
       this.handleKeyPress({key: 'e'});
       expect(location.query.expanded).toBe('true');
       this.handleKeyPress({key: 'c'});
-      expect(location.query).toBe(null);
+      expect(location.query).toEqual({});
     },
   );
 });
