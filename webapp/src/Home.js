@@ -60,7 +60,7 @@ class Home extends PureComponent {
           <p>
             Listing all the open issues assigned to that user and
             their open dependencies.  For example,&nbsp;
-            <Link to="http/github.com/jbenet">
+            <Link to={{pathname: 'http/github.com/jbenet', query: this.props.location.query}}>
               <code>github.com/jbenet</code>
             </Link>.
           </p>
@@ -74,7 +74,7 @@ class Home extends PureComponent {
           <p>
             Listing all the open issues in that repository and their
             open dependencies.  For example,&nbsp;
-            <Link to="http/github.com/jbenet/depviz">
+            <Link to={{pathname: 'http/github.com/jbenet/depviz', query: this.props.location.query}}>
               <code>github.com/jbenet/depviz</code>
             </Link>.
           </p>
@@ -103,7 +103,7 @@ class Home extends PureComponent {
           <p>
             Listing the referenced issue and all of its open
             dependencies.  For example,&nbsp;
-            <Link to="http/github.com/jbenet/depviz/1">
+            <Link to={{pathname: 'http/github.com/jbenet/depviz/1', query: this.props.location.query}}>
               <code>github.com/jbenet/depviz#1</code>
             </Link>.
           </p>

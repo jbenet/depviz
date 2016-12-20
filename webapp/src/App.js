@@ -4,6 +4,7 @@ import IndexRoute from 'react-router/lib/IndexRoute';
 import Route from 'react-router/lib/Route';
 import hashHistory from 'react-router/lib/hashHistory';
 import './App.css';
+import Config from './Config';
 import DepGraph from './DepGraph';
 import GetDummyHostNodes, { CanonicalDummyHostKey } from './DummyHost';
 import GetGitHubNodes, { CanonicalGitHubKey } from './GitHub';
@@ -25,9 +26,22 @@ function getSize() {
   }
 }
 
+function changeView(prevState, nextState, replace) {
+  if (prevState.location.pathname === '/config' &&
+      nextState.location.pathname !== '/config' &&
+      nextState.location.query.back) {
+    var query = Object.assign({}, nextState.location.query);
+    delete query.back;
+    replace({
+      pathname: nextState.location.pathname,
+      query: query,
+    });
+  }
+}
+
 export class HomeView extends Component {
   render() {
-    return <Home getSize={getSize} />
+    return <Home getSize={getSize} location={this.props.location} />
   }
 }
 
@@ -47,15 +61,18 @@ export class DepGraphView extends Component {
   }
 
   handleKeyPress(event) {
+    var query = Object.assign({}, this.props.location.query);
     if (event.key === 'e' && !this.expanded()) {
+      query.expanded = 'true';
       this.props.router.replace({
         pathname: this.props.location.pathname,
-        query: {expanded: 'true'},
+        query: query,
       });
     } else if (event.key === 'c' && this.expanded()) {
+      delete query.expanded;
       this.props.router.replace({
         pathname: this.props.location.pathname,
-        query: null,
+        query: query,
       });
     }
   }
@@ -76,7 +93,10 @@ function enterGraphView(nextState, replace) {
   if (splat === canonicalKey || splat === canonicalPath) {
     return;
   }
-  replace('/http/' + canonicalPath);
+  replace({
+    pathname: '/http/' + canonicalPath,
+    query: nextState.location.query,
+  });
 }
 
 class App extends Component {
@@ -84,8 +104,9 @@ class App extends Component {
     return (
       <div className="App">
         <Router history={hashHistory}>
-          <Route path="/" component={Layout}>
+          <Route path="/" component={Layout} onChange={changeView}>
             <IndexRoute component={HomeView} />
+            <Route path="/config" component={Config} />
             <Route path="/http/*" component={DepGraphView}
               onEnter={enterGraphView} />
           </Route>

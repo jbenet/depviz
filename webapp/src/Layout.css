@@ -7,3 +7,10 @@
 .Layout-logo {
   height: 36px; /* sync with HeaderHeight */
 }
+
+.Layout-header-icon {
+  float: right;
+  font-size: 30px;
+  color: white;
+  text-decoration: none;
+}

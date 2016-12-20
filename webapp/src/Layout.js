@@ -12,8 +12,8 @@ class Layout extends Component {
     width = width === undefined ? window.innerWidth : width;
     const max = 40; /* number of chars we'd like if we have space */
     const min = 15; /* number of chars we require even if it will reflow */
-    const maxCutoff = 500; /* width above which Jump is max */
-    const minCutoff = 300; /* width below which Jump is min */
+    const maxCutoff = 530; /* width above which Jump is max */
+    const minCutoff = 330; /* width below which Jump is min */
     if (width >= maxCutoff) {
       return max;
     } else if (width <= minCutoff) {
@@ -24,13 +24,43 @@ class Layout extends Component {
     ));
   }
 
+  jump(pathname) {
+    this.props.router.push({
+      pathname: pathname,
+      query: this.props.location.query,
+    });
+  }
+
   render() {
+    var settingsLink, settingsStyle;
+    if (this.props.location.pathname === '/config') {
+      settingsStyle = {
+        color: 'orange',
+      };
+      var query = Object.assign({}, this.props.location.query);
+      var back = query.back || '/';
+      delete query.back;
+      settingsLink = {
+        pathname: back,
+        query: query,
+      };
+    } else {
+      settingsLink = {
+        pathname: '/config',
+        query: Object.assign({
+          back: this.props.location.pathname,
+        }, this.props.location.query),
+      };
+    }
     return <div className="Layout">
       <div className="Layout-header">
-        <Link to="/">
+        <Link to={{pathname: '/', query: this.props.location.query}}>
           <img src={logo} className="Layout-logo" alt="logo (homepage)" />
         </Link>
-        <Jump push={this.props.router.push}
+        <Link className="Layout-header-icon" to={settingsLink} style={settingsStyle}>
+          ⚙
+        </Link>
+        <Jump push={this.jump.bind(this)}
           getSize={this.getJumpSize.bind(this)} />
       </div>
       {this.props.children}
