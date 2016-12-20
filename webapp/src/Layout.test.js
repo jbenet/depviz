@@ -18,11 +18,11 @@ it('generated expected jump sizes', () => {
     <Layout router={router} />,
     div,
     function () {
-			expect(this.getJumpSize(600)).toBe(40);
-			expect(this.getJumpSize(500)).toBe(40);
+      expect(this.getJumpSize(600)).toBe(40);
+      expect(this.getJumpSize(500)).toBe(40);
       expect(this.getJumpSize(400)).toBe(27);
-			expect(this.getJumpSize(300)).toBe(15);
-			expect(this.getJumpSize(200)).toBe(15);
+      expect(this.getJumpSize(300)).toBe(15);
+      expect(this.getJumpSize(200)).toBe(15);
     }
   );
 });

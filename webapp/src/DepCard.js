@@ -16,8 +16,9 @@ class DepCard extends PureComponent {
 
   blockerCount(nodes) {
     var count = 0;
-    for (var index in (this.props.dependencies || [])) {
-      if (true) {
+    var dependencies = this.props.dependencies || [];
+    for (var index in dependencies) {
+      if (Object.prototype.hasOwnProperty.call(dependencies, index)) {
         var key = this.props.dependencies[index];
         if (nodes[key] !== undefined &&
             !nodes[key].props.done) {
@@ -35,7 +36,7 @@ class DepCard extends PureComponent {
   dependentCount(nodes) {
     var count = 0;
     for (var dependentKey in nodes) {
-      if (true) {
+      if (Object.prototype.hasOwnProperty.call(nodes, dependentKey)) {
         if (nodes[dependentKey].parents().indexOf(this.props.slug) !== -1) {
           count += 1;
         }
