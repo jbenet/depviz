@@ -3,6 +3,10 @@ class GitHub {
     return new Issues(user, repo);
   }
 
+  getRepo(user, repo) {
+    return new Repository(user, repo);
+  }
+
   search() {
     return new Search();
   }
@@ -58,8 +62,9 @@ class Issues {
       body: bodyLines.join('\n') + '\n',
       html_url: `https://github.com/${this._user}/${this._repo}/issues/${number}`,
       number: number,
+      pull_request: number === 1 || number === 99 ? {} : null,
       repository_url: `https://api.github.com/repos/${this._user}/${this._repo}`,
-      state: number < 10 ? 'open' : 'closed',
+      state: number < 10 || number === 99 ? 'open' : 'closed',
       title: 'Some title for ' + number,
       comments: number % 2 ? 0 : number,
       labels: number % 2 ? [] : [
@@ -90,6 +95,22 @@ class Issues {
         this._getIssue(2),
       ]
     });
+  }
+}
+
+class Repository {
+  constructor(user, repo) {
+    this._user = user;
+    this._repo = repo;
+    this._calls = {};
+  }
+
+  _request(method, path, data, cb) {
+    if (path === '/repos/undefined/commits/refs/pull/99/head/status') {
+      cb(new Error(`error making request ${method} ${path}`));
+    } else {
+      cb(null, {state: 'success'});
+    }
   }
 }
 
