@@ -88,7 +88,7 @@ it('expanded renders without crashing', () => {
       comments={2}
       labels={[{name: 'bug', color: '#ff0000'}]}
       people={[{name: 'p1', url: 'https://example.com/p1'}]}
-      expanded={true} />,
+      view="expanded" />,
     svg
   );
 });
@@ -107,7 +107,7 @@ it('expanded with avatar renders without crashing', () => {
       dependents={20}
       done={false}
       people={[{name: 'p1', avatar: 'https://example.com/p1.svg', url: 'https://example.com/p1'}]}
-      expanded={true} />,
+      view="expanded" />,
     svg
   );
 });
@@ -134,7 +134,7 @@ it('expanded with multiple labels renders without crashing', () => {
       comments={2}
       labels={labels}
       people={[{name: 'p1', url: 'https://example.com/p1'}]}
-      expanded={true} />,
+      view="expanded" />,
     svg
   );
 });
@@ -149,7 +149,7 @@ it('expanded success status renders without crashing', () => {
       title="depviz v0: single page rendering"
       done={false}
       status="success"
-      expanded={true} />,
+      view="expanded" />,
     svg
   );
 });
@@ -164,7 +164,7 @@ it('expanded failure status renders without crashing', () => {
       title="depviz v0: single page rendering"
       done={false}
       status="failure"
-      expanded={true} />,
+      view="expanded" />,
     svg
   );
 });
@@ -179,7 +179,7 @@ it('expanded pending status renders without crashing', () => {
       title="depviz v0: single page rendering"
       done={false}
       status="pending"
-      expanded={true} />,
+      view="expanded" />,
     svg
   );
 });
@@ -194,7 +194,7 @@ it('expanded example status crashes', () => {
       title="depviz v0: single page rendering"
       done={false}
       status="example"
-      expanded={true} />,
+      view="expanded" />,
     svg
   )).toThrowError('unrecognized status: example');
 });

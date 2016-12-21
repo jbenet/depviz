@@ -112,7 +112,7 @@ it('user view renders without crashing', () => {
   );
 });
 
-it('expand/collapse key presses render without crashing', () => {
+it('expand/collapse/list key presses render without crashing', () => {
   const div = document.createElement('div');
   var location = {
     pathname: '/http/github.com/jbenet/depviz',
@@ -128,8 +128,10 @@ it('expand/collapse key presses render without crashing', () => {
     div,
     function () {
       this.handleKeyPress({key: 'e'});
-      expect(location.query.expanded).toBe('true');
+      expect(location.query.view).toBe('expanded');
       this.handleKeyPress({key: 'c'});
+      expect(location.query.view).toBe('collapsed');
+      this.handleKeyPress({key: 'l'});
       expect(location.query).toEqual({});
     },
   );

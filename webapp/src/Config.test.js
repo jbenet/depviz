@@ -11,33 +11,33 @@ it('renders without crashing', () => {
   );
 });
 
-it('handles expanded check', () => {
+it('handles expanded view', () => {
   const div = document.createElement('div');
   var router = {replace: jest.fn()};
   ReactDOM.render(
     <Config router={router} location={{pathname: '/config', query: {}}} />,
     div,
     function() {
-      this.handleExpanded({target: {checked: true}});
+      this.handleView({currentTarget: {value: 'expanded'}});
       expect(router.replace).toHaveBeenCalledTimes(1);
       expect(router.replace).toHaveBeenCalledWith({
         pathname: '/config',
-        query: {expanded: 'true'},
+        query: {view: 'expanded'},
       });
     }
   );
 });
 
-it('handles expanded uncheck', () => {
+it('handles list view', () => {
   const div = document.createElement('div');
   var router = {replace: jest.fn()};
   ReactDOM.render(
     <Config
       router={router}
-      location={{pathname: '/config', query: {expanded: 'true'}}} />,
+      location={{pathname: '/config', query: {view: 'expanded'}}} />,
     div,
     function() {
-      this.handleExpanded({target: {checked: false}});
+      this.handleView({currentTarget: {value: 'view'}});
       expect(router.replace).toHaveBeenCalledTimes(1);
       expect(router.replace).toHaveBeenCalledWith({
         pathname: '/config',

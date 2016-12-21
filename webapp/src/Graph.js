@@ -60,7 +60,7 @@ class Graph extends PureComponent {
     return {x: x, y: y};
   }
 
-  positionNodes(nodes) {
+  positionGraphvizNodes(nodes) {
     if (Object.keys(nodes).length === 0) {
       return {
         edges: [],
@@ -162,6 +162,128 @@ class Graph extends PureComponent {
     }
   }
 
+  dependencyWeight(node, nodes, dependencyWeights) {
+    if (node.props.slug in dependencyWeights) {
+      return dependencyWeights[node.props.slug];
+    }
+    const parents = node.parents();
+    var weight = node.props.done ? 0.1 : 1;
+    for (var index in parents) {
+      if (Object.prototype.hasOwnProperty.call(parents, index)) {
+        var key = parents[index];
+        var parent = nodes[key];
+        if (parent) {
+          weight += this.dependencyWeight(parent, nodes, dependencyWeights);
+        }
+      }
+    }
+    dependencyWeights[node.props.slug] = weight;
+    return weight;
+  }
+
+  listSortKey(key, nodes, dependencyWeights) {
+    const node = nodes[key];
+    return [
+      !node.props.done,
+      -this.dependencyWeight(node, nodes, dependencyWeights),
+      key,
+    ];
+  }
+
+  positionListNodes(nodes) {
+    if (Object.keys(nodes).length === 0) {
+      return {
+        edges: [],
+        nodes: [],
+      };
+    }
+    var index, key, name, node;
+    var userWidth = 400;
+    var userHeight = 400;
+    if (this.props.getSize) {
+      const size = this.props.getSize();
+      userWidth = size.width / this.props.scale;
+      userHeight = size.height / this.props.scale;;
+    }
+    var _this = this;
+    var dependencyWeights = {};
+    var keys = Object.keys(nodes);
+    keys.sort(function (a, b) {
+      return _this.listSortKey(
+        a, nodes, dependencyWeights
+      ) > _this.listSortKey(
+        b, nodes, dependencyWeights
+      );
+    });
+    var positioned = [];
+    var nodeY = {};
+    var done = 0;
+    for (index in keys) {
+      if (Object.prototype.hasOwnProperty.call(keys, index)) {
+        key = keys[index];
+        node = nodes[key];
+        if (node.props.done) {
+          done += 1;
+        } else {
+          break;
+        }
+      }
+    }
+    const depCardWidth = 50;  /* FIXME: DRY this up */
+    const depCardHeight = 1.5 + 2 * 0.5;  /* FIXME: DRY this up */
+    for (index in keys) {
+      if (Object.prototype.hasOwnProperty.call(keys, index)) {
+        key = keys[index];
+        node = nodes[key];
+        name = this.nodeName(key);
+        nodeY[key] = depCardHeight * (index - done) + userHeight / 2;
+        positioned.push({
+          key: name,
+          node: node,
+          cx: userWidth / 2,
+          cy: nodeY[key],
+        });
+      }
+    }
+    const x = (userWidth + depCardWidth) / 2;
+    var edges = [];
+    for (key in nodes) {
+      if (Object.prototype.hasOwnProperty.call(nodes, key)) {
+        node = nodes[key];
+        const parents = node.parents();
+        for (index in parents) {
+          if (Object.prototype.hasOwnProperty.call(parents, index)) {
+            var parentKey = parents[index];
+            var parentNode = nodes[parentKey];
+            if (parentNode) {
+              name = this.edgeName(parentKey, node.props.slug);
+              var y1 = nodeY[parentKey];
+              var y2 = nodeY[key];
+              var r = 0.6 * (y2 - y1);
+              edges.push({
+                key: name,
+                node1: parentNode,
+                node2: node,
+                path: ['M', x, y1, 'A', r, r, 0, 0, 1, x, y2].join(' '),
+              });
+            }
+          }
+        }
+      }
+    }
+    return {
+      edges: edges,
+      nodes: positioned,
+    }
+  }
+
+  positionNodes(nodes) {
+    if (this.props.view === 'list') {
+      return this.positionListNodes(nodes);
+    }
+    return this.positionGraphvizNodes(nodes);
+  }
+
   /* Properties:
    *
    * * getSize() -> {width: ..., height: ...}, (optional) callback for
@@ -176,6 +298,7 @@ class Graph extends PureComponent {
    * * renderEdge({node1: ..., node2: ..., path: ...), a method which
    *   renders an edge in the graph.
    * * onKeyPress(event), (optional) callback for keypress events.
+   * * view, (optional) one of 'list', 'collapsed', or 'expanded'
    */
   render() {
     var positioned = this.positionNodes(this.props.nodes);

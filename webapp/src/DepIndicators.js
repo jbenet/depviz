@@ -108,20 +108,25 @@ class DependentsIndicator extends PureComponent {
 
 class DepIndicators extends PureComponent {
   render() {
+    var dependenciesX = this.props.cx;
+    var dependentsX = this.props.cx;
     var relatedX = this.props.cx;
-    if (this.props.dy < 1.75) {
+    if (this.props.dy === 0) {
+      dependenciesX -= 4;
+      dependentsX -= 2;
+    } else if (this.props.dy < 1.75) {
       relatedX += 0.6;
     }
     return <g className="DepIndicators">
       <DependenciesIndicator
-        cx={this.props.cx} cy={this.props.cy - this.props.dy}
+        cx={dependenciesX} cy={this.props.cy - this.props.dy}
         parents={this.props.parents}
         blockers={this.props.blockers}
         dependencies={this.props.dependencies}
         getNodes={this.props.getNodes}
         pushNodes={this.props.pushNodes} />
       <DependentsIndicator
-        cx={this.props.cx} cy={this.props.cy + this.props.dy}
+        cx={dependentsX} cy={this.props.cy + this.props.dy}
         dependents={this.props.dependents}
         done={this.props.done} />
       <RelatedIndicator
