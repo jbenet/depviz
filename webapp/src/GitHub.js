@@ -42,16 +42,24 @@ export function CanonicalGitHubKey(key) {
   return key;
 }
 
-function nodeFromIssue(issue, props) {
-  var dependencies = [];
-  var related = [];
+function nodeFromIssue(issue, props, pushNodes) {
+  props = Object.assign({}, props);
+  props.host = 'github.com';
+  props.title = issue.title;
+  props.href = issue.html_url;
+  props.done = issue.state !== 'open';
+  props.comments = issue.comments;
   var regexp = /^depends +on +(?:([^ ]+)\/)?(?:([^ ]+))?(?:#([0-9]+)) *$/gim;
   // FIXME: look for related too
   var match;
   match = /^.*\/([^\/]+)\/([^\/]+)$/.exec(issue.repository_url);
   var issueUser = match[1];
   var issueRepo = match[2];
-  var key = 'github.com/' + issueUser + '/' + issueRepo + '#' + issue.number;
+  props.slug = (
+    'github.com/' + issueUser + '/' + issueRepo + '#' + issue.number
+  );
+  props.dependencies = [];
+  props.related = [];
   for (;;) {
     match = regexp.exec(issue.body);
     if (match === null) {
@@ -68,10 +76,10 @@ function nodeFromIssue(issue, props) {
       repo = issueRepo;
     }
     var relatedKey = 'github.com/' + user + '/' + repo + '#' + number;
-    dependencies.push(relatedKey);
+    props.dependencies.push(relatedKey);
   }
-  var tasks = 0;
-  var tasksCompleted = 0;
+  props.tasks = 0;
+  props.tasksCompleted = 0;
   regexp = /^[^[]*\[([ x])].*$/gm;
   for (;;) {
     match = regexp.exec(issue.body);
@@ -80,19 +88,18 @@ function nodeFromIssue(issue, props) {
     }
     var check = match[1];
     if (check === 'x') {
-      tasksCompleted += 1;
+      props.tasksCompleted += 1;
     }
-    tasks += 1;
+    props.tasks += 1;
   }
-  var labels = issue.labels.map(function (label) {
+  props.labels = issue.labels.map(function (label) {
     return {
       name: label.name,
       color: '#' + label.color,
     }
   });
-  var people;
   if (issue.assignees.length) {
-    people = issue.assignees.map(function (user) {
+    props.people = issue.assignees.map(function (user) {
       return {
         name: user.login,
         url: user.html_url,
@@ -100,27 +107,30 @@ function nodeFromIssue(issue, props) {
       }
     });
   } else {
-    people = [{
+    props.people = [{
       name: issue.user.login,
       url: issue.user.html_url,
       avatar: issue.user.avatar_url,
     }];
   }
-  return new DepCard({
-    ...props,
-    slug: key,
-    host: 'github.com',
-    title: issue.title,
-    href: issue.html_url,
-    done: issue.state !== 'open',
-    dependencies: dependencies,
-    related: related,
-    comments: issue.comments,
-    tasks: tasks,
-    tasksCompleted: tasksCompleted,
-    labels: labels,
-    people: people,
-  });
+  if (issue.pull_request && !props.done) {
+    // getCombinedStatus https://github.com/github-tools/github/pull/397
+    var _repo = gh.getRepo(issueUser, issueRepo);
+    _repo._request(
+      'GET',
+      `/repos/${_repo.__fullname}/commits/refs/pull/${issue.number}/head/status`,
+      null,
+      function (error, status) {
+        if (error) {
+          console.log('throw', error, status);
+          throw error;
+        }
+        props.status = status.state;
+        pushNodes([new DepCard(props)]);
+      }
+    );
+  }
+  return new DepCard(props);
 }
 
 function GetGitHubNodes(key, pushNodes, props) {
@@ -130,7 +140,7 @@ function GetGitHubNodes(key, pushNodes, props) {
       q: `assignee:${data.user} is:open`,
     }).then(function (issues) {
       var nodes = issues.data.map(function (issue) {
-        return nodeFromIssue(issue, props);
+        return nodeFromIssue(issue, props, pushNodes);
       });
       pushNodes(nodes);
     });
@@ -141,7 +151,7 @@ function GetGitHubNodes(key, pushNodes, props) {
     ).listIssues(
     ).then(function (issues) {
       var nodes = issues.data.map(function (issue) {
-        return nodeFromIssue(issue, props);
+        return nodeFromIssue(issue, props, pushNodes);
       });
       pushNodes(nodes);
     });
@@ -151,7 +161,7 @@ function GetGitHubNodes(key, pushNodes, props) {
   ).getIssue(
     data.number
   ).then(function (issue) {
-    pushNodes([nodeFromIssue(issue.data, props)]);
+    pushNodes([nodeFromIssue(issue.data, props, pushNodes)]);
   });
 }
 

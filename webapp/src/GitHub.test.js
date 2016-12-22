@@ -125,7 +125,7 @@ it('repository keys are understood', () => {
     GetGitHubNodes(
       'github.com/jbenet/depviz', pushNodes
     ).then(function() {
-      expect(nodes.length).toBe(2);
+      expect(nodes.length).toBe(3);
       resolve();
     }).catch(reject);
   });
@@ -144,8 +144,23 @@ it('user keys are understood', () => {
     GetGitHubNodes(
       'github.com/jbenet', pushNodes
     ).then(function() {
-      expect(nodes.length).toBe(2);
+      expect(nodes.length).toBe(3);
       resolve();
     }).catch(reject);
+  });
+});
+
+it('unsuccessful status request throws an error', () => {
+  var pushNodes = jest.fn();
+  return GetGitHubNodes(
+    'github.com/jbenet/depviz#99', pushNodes
+  ).then(function () {
+    throw new Error('GetGitHubNodes did not throw an error');
+  }).catch(function (error) {
+    expect(() => {
+      throw error;
+    }).toThrowError(
+      'error making request GET /repos/undefined/commits/refs/pull/99/head/status'
+    );
   });
 });

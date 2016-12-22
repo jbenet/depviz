@@ -62,3 +62,15 @@ it('user key fetches without crashing', () => {
   }
   return dummyGetter.GetNodes('dummy/jbenet', pushNodes);
 });
+
+it('non-status fetches without crashing', () => {
+  var nodes = [];
+  function pushNodes(newNodes) {
+    for (var index in newNodes) {
+      if (Object.prototype.hasOwnProperty.call(newNodes, index)) {
+        nodes.push(newNodes[index]);
+      }
+    }
+  }
+  return dummyGetter.GetNodes('dummy/jbenet/depviz#4', pushNodes);
+});

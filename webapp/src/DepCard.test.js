@@ -139,27 +139,64 @@ it('expanded with multiple labels renders without crashing', () => {
   );
 });
 
-it('expanded with no right column renders without crashing', () => {
+it('expanded success status renders without crashing', () => {
   const svg = document.createElement('svg');
-  const labels = [
-    {name: 'bug', 'color': '#ff0000'},
-    {name: 'help wanted', 'color': '#0000ff'},
-  ];
   ReactDOM.render(
     <DepCard
       cx={40} cy={30}
       host="github.com"
       slug="github.com/jbenet/depviz#1"
       title="depviz v0: single page rendering"
-      href="https://github.com/jbenet/depviz/issues/1"
-      dependencies={5}
-      related={1}
-      dependents={20}
       done={false}
-      labels={labels}
+      status="success"
       expanded={true} />,
     svg
   );
+});
+
+it('expanded failure status renders without crashing', () => {
+  const svg = document.createElement('svg');
+  ReactDOM.render(
+    <DepCard
+      cx={40} cy={30}
+      host="github.com"
+      slug="github.com/jbenet/depviz#1"
+      title="depviz v0: single page rendering"
+      done={false}
+      status="failure"
+      expanded={true} />,
+    svg
+  );
+});
+
+it('expanded pending status renders without crashing', () => {
+  const svg = document.createElement('svg');
+  ReactDOM.render(
+    <DepCard
+      cx={40} cy={30}
+      host="github.com"
+      slug="github.com/jbenet/depviz#1"
+      title="depviz v0: single page rendering"
+      done={false}
+      status="pending"
+      expanded={true} />,
+    svg
+  );
+});
+
+it('expanded example status crashes', () => {
+  const svg = document.createElement('svg');
+  expect(() => ReactDOM.render(
+    <DepCard
+      cx={40} cy={30}
+      host="github.com"
+      slug="github.com/jbenet/depviz#1"
+      title="depviz v0: single page rendering"
+      done={false}
+      status="example"
+      expanded={true} />,
+    svg
+  )).toThrowError('unrecognized status: example');
 });
 
 it('blocker count with some completed dependencies', () => {

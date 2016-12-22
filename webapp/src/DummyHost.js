@@ -89,6 +89,19 @@ class GetDummyHostNodes {
       }
     };
 
+    var status = function (number) {
+      if (number % 4 === 0) {
+        return undefined;
+      }
+      if (number % 4 === 1) {
+        return 'success';
+      }
+      if (number % 4 === 2) {
+        return 'failure';
+      }
+      return 'pending';
+    }
+
     return new DepCard({
       ...props,
       slug: key,
@@ -96,6 +109,7 @@ class GetDummyHostNodes {
       title: 'dummy ' + key,
       href: `https://example.com/${data.user}/${data.repo}/issue/${data.number}`,
       done: done(data.number),
+      status: status(data.number),
       dependencies: dependencies(data.number),
       related: [],
       comments: data.number % 2 ? undefined : data.number,
@@ -105,10 +119,16 @@ class GetDummyHostNodes {
         {name: 'bug', color: '#ee0701'},
         {name: 'help wanted', color: '#84b6eb'},
       ],
-      people: [{
-        name: 'assignee' + data.number,
-        url: 'https://example.com/assignee' + data.number,
-      }],
+      people: [
+        {
+          name: 'assignee' + data.number,
+          url: 'https://example.com/assignee' + data.number,
+        },
+        {
+          name: 'assignee' + (data.number + 1),
+          url: 'https://example.com/assignee' + (data.number + 1),
+        }
+      ],
     })
   }
 
