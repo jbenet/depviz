@@ -1,7 +1,11 @@
 import GitHub from 'github-api';
 import DepCard from './DepCard';
 
-const gh = new GitHub(); /* unauthenticated client */
+var gh = new GitHub(); /* unauthenticated client */
+
+export function SetGitHubAuth(auth) {
+  gh = new GitHub(auth);
+}
 
 function parseKey(key) {
   var match = /^github\.com\/([^\/#]+)(\/?)([^\/#]*)(\/|\/issues\/|\/pull\/|)(#?)([0-9]*)$/.exec(key);

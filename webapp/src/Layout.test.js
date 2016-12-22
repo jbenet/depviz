@@ -4,18 +4,24 @@ import Layout from './Layout';
 
 it('renders without crashing', () => {
   const div = document.createElement('div');
+  var route = jest.fn();
   var router = jest.fn();
   ReactDOM.render(
-    <Layout router={router} location={{pathname: '/', query: {}}} />,
+    <Layout
+      route={route} router={router}
+      location={{pathname: '/', query: {}}} />,
     div
   );
 });
 
 it('preserves query parameters through jumps', () => {
   const div = document.createElement('div');
+  var route = jest.fn();
   var router = {push: jest.fn()};
   ReactDOM.render(
-    <Layout router={router} location={{pathname: '/', query: {foo: 'bar'}}} />,
+    <Layout
+      route={route} router={router}
+      location={{pathname: '/', query: {foo: 'bar'}}} />,
     div,
     function () {
       this.jump('/config');
@@ -30,9 +36,12 @@ it('preserves query parameters through jumps', () => {
 
 it('generates expected jump sizes', () => {
   const div = document.createElement('div');
+  var route = jest.fn();
   var router = jest.fn();
   ReactDOM.render(
-    <Layout router={router} location={{pathname: '/', query: {}}} />,
+    <Layout
+      route={route} router={router}
+      location={{pathname: '/', query: {}}} />,
     div,
     function () {
       expect(this.getJumpSize(630)).toBe(40);

@@ -1,7 +1,9 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
 import hashHistory from 'react-router/lib/hashHistory';
+import { GitHubAuthHistory } from 'github-api';
 import App, { DepGraphView } from './App';
+import ShallowEqual from './ShallowEqual';
 
 it('home page renders without crashing', () => {
   const div = document.createElement('div');
@@ -29,6 +31,27 @@ it('leaving the config view clears ?back=...', () => {
   );
 });
 
+it('leaving the config view updates the GitHub token', () => {
+  const div = document.createElement('div');
+  ReactDOM.render(
+    <App />,
+    div,
+    function () {
+      hashHistory.push({
+        pathname: '/config',
+        query: {},
+      });
+      hashHistory.push({
+        pathname: '/config',
+        query: {'github-token': 'da39a3ee5e6b4b0d3255bfef95601890afd80709'},
+      });
+      expect(
+        GitHubAuthHistory[GitHubAuthHistory.length - 1]
+      ).toEqual({'token': 'da39a3ee5e6b4b0d3255bfef95601890afd80709'});
+    },
+  );
+});
+
 it('issue view renders without crashing', () => {
   const div = document.createElement('div');
   ReactDOM.render(
@@ -47,6 +70,28 @@ it('entering graph view normalizes non-canonical paths', () => {
       expect(
         hashHistory.getCurrentLocation().pathname
       ).toBe('/http/dummy/jbenet/depviz/31');
+    },
+  );
+});
+
+it('persists query in storage', () => {
+  const div = document.createElement('div');
+  const storage = {
+    getItem: jest.fn().mockReturnValueOnce('{"foo": "bar"}'),
+    setItem: jest.fn(),
+  };
+  ReactDOM.render(
+    <App storage={storage} />,
+    div,
+    function () {
+      expect(storage.getItem).toHaveBeenCalledTimes(1);
+      expect(storage.getItem).toHaveBeenCalledWith('depviz.config');
+      expect(storage.setItem).toHaveBeenCalledTimes(1);
+      var setCall = storage.setItem.mock.calls[0];
+      expect(setCall.length).toBe(2);
+      expect(setCall[0]).toBe('depviz.config');
+      var setValue = JSON.parse(setCall[1]);
+      expect(ShallowEqual(setValue, {foo: 'bar'})).toBe(true);
     },
   );
 });

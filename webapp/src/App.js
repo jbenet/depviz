@@ -7,10 +7,11 @@ import './App.css';
 import Config from './Config';
 import DepGraph from './DepGraph';
 import GetDummyHostNodes, { CanonicalDummyHostKey } from './DummyHost';
-import GetGitHubNodes, { CanonicalGitHubKey } from './GitHub';
+import GetGitHubNodes, { CanonicalGitHubKey, SetGitHubAuth } from './GitHub';
 import GetNodes, { Canonicalizers, Getters, CanonicalKey } from './GetNodes';
 import Home from './Home';
 import Layout, { HeaderHeight } from './Layout';
+import ShallowEqual from './ShallowEqual';
 
 Canonicalizers['dummy'] = CanonicalDummyHostKey;
 var dummyGetter = new GetDummyHostNodes();
@@ -23,19 +24,6 @@ function getSize() {
   return {
     height: window.innerHeight - HeaderHeight,
     width: window.innerWidth,
-  }
-}
-
-function changeView(prevState, nextState, replace) {
-  if (prevState.location.pathname === '/config' &&
-      nextState.location.pathname !== '/config' &&
-      nextState.location.query.back) {
-    var query = Object.assign({}, nextState.location.query);
-    delete query.back;
-    replace({
-      pathname: nextState.location.pathname,
-      query: query,
-    });
   }
 }
 
@@ -100,11 +88,41 @@ function enterGraphView(nextState, replace) {
 }
 
 class App extends Component {
+  changeView(prevState, nextState, replace) {
+    var nextQuery = Object.assign({}, nextState.location.query);
+    if (prevState.location.pathname === '/config' &&
+        nextState.location.pathname !== '/config' &&
+        nextState.location.query.back) {
+      delete nextQuery.back;
+      replace({
+        pathname: nextState.location.pathname,
+        query: nextQuery,
+      });
+    }
+
+    if (prevState.location.query['github-token'] !==
+        nextState.location.query['github-token']) {
+      SetGitHubAuth({
+        token: nextState.location.query['github-token'],
+      });
+    }
+
+    var prevQuery = Object.assign({}, prevState.location.query);
+    delete prevQuery.back;
+    delete nextQuery.back;
+    if (this.props.storage && !ShallowEqual(prevQuery, nextQuery)) {
+      this.props.storage.setItem('depviz.config', JSON.stringify(nextQuery));
+    }
+  }
+
   render() {
     return (
       <div className="App">
         <Router history={hashHistory}>
-          <Route path="/" component={Layout} onChange={changeView}>
+          <Route
+              path="/" component={Layout}
+              onChange={this.changeView.bind(this)}
+              storage={this.props.storage}>
             <IndexRoute component={HomeView} />
             <Route path="/config" component={Config} />
             <Route path="/http/*" component={DepGraphView}

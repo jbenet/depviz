@@ -2,12 +2,30 @@ import React, { Component } from 'react';
 import Link from 'react-router/lib/Link';
 import logo from './logo/depviz.svg';
 import Jump from './Jump';
+import ShallowEqual from './ShallowEqual';
 import './Layout.css';
 
 /* sync with CSS .Layout-header padding and .Layout-logo height. */
 export const HeaderHeight = 40;
 
 class Layout extends Component {
+  componentWillMount() {
+    if (!this.props.route.storage) {
+      return;
+    }
+    var config = this.props.route.storage.getItem('depviz.config');
+    if (config) {
+      var query = JSON.parse(config);
+      Object.assign(query, this.props.location.query);
+      if (!ShallowEqual(query, this.props.location.query)) {
+        this.props.router.replace({
+          pathname: this.props.location.pathname,
+          query: query,
+        });
+      }
+    }
+  }
+
   getJumpSize(width) {
     width = width === undefined ? window.innerWidth : width;
     const max = 40; /* number of chars we'd like if we have space */

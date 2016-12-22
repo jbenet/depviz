@@ -1,4 +1,10 @@
+export var GitHubAuthHistory = [];
+
 class GitHub {
+  constructor(auth) {
+    GitHubAuthHistory.push(auth);
+  }
+
   getIssues(user, repo) {
     return new Issues(user, repo);
   }
