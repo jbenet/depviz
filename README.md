@@ -1,3 +1,5 @@
+<center>![](./logo/depviz-logo.png)</center>
+
 # depviz - dependency visualizer for the web
 
 > https://jbenet.github.io/depviz
