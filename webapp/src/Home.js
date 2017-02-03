@@ -1,5 +1,6 @@
 import React, { PureComponent } from 'react';
 import Link from 'react-router/lib/Link';
+import Bookmarklet from './Bookmarklet';
 import github from './logo/github.svg';
 import './Home.css';
 
@@ -139,6 +140,17 @@ class Home extends PureComponent {
           </blockquote>
         </dd>
       </dl>
+
+      <h2 id="bookmarklet">Bookmarklet</h2>
+
+      <p>
+        This <Bookmarklet>depviz</Bookmarklet> bookmarklet takes you
+        to the depviz view of the issue you are currently viewing.  To
+        use it, copy the link into your bookmarks, and start browsing
+        a host supported by the <a href="#identifiers">jump bar</a>.
+        When you want to view the depviz graph for the issue you're
+        viewing, click on the bookmarklet.
+      </p>
 
       <h2 id="development">Development</h2>
 
