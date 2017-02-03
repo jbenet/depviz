@@ -1,4 +1,4 @@
-<center>![](./logo/depviz-logo.png)</center>
+<div algin="center"><img src="./logo/depviz-logo.png" /></div>
 
 # depviz - dependency visualizer for the web
 
