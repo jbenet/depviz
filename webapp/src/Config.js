@@ -2,19 +2,19 @@ import React, { PureComponent } from 'react';
 import './Config.css';
 
 class Config extends PureComponent {
-  expanded() {
+  view() {
     return (
       this.props.location &&
-      this.props.location.query.expanded === 'true'
+      this.props.location.query.view
     );
   }
 
-  handleExpanded(event) {
+  handleView(event) {
     var query = Object.assign({}, this.props.location.query);
-    if (event.target.checked) {
-      query.expanded = 'true';
+    if (event.currentTarget.value === 'list') {
+      delete query.view;
     } else {
-      delete query.expanded;
+      query.view = event.currentTarget.value;
     }
     this.props.router.replace({
       pathname: this.props.location.pathname,
@@ -42,11 +42,25 @@ class Config extends PureComponent {
       <form>
         <p>
           <label>
-            Expanded cards:&nbsp;
-            <input
-              name="expanded" type="checkbox"
-              checked={this.expanded()}
-              onChange={this.handleExpanded.bind(this)} />
+            View:&nbsp;
+
+            <input type="radio" name="view_list"
+              value="list"
+              checked={this.view() === undefined}
+              onChange={this.handleView.bind(this)} />
+            List
+
+            <input type="radio" name="view_collapsed"
+              value="collapsed"
+              checked={this.view() === 'collapsed'}
+              onChange={this.handleView.bind(this)} />
+            Collapsed
+
+            <input type="radio" name="view_expanded"
+              value="expanded"
+              checked={this.view() === 'expanded'}
+              onChange={this.handleView.bind(this)} />
+            Expanded
           </label>
         </p>
         <p>

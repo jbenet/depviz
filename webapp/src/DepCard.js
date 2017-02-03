@@ -65,7 +65,7 @@ class DepCard extends PureComponent {
       tasksCompleted={this.props.tasksCompleted}
       labels={this.props.labels}
       people={this.props.people}
-      expanded={this.props.expanded}
+      view={this.props.view}
       getNodes={this.props.getNodes}
       pushNodes={pushNodes} />
   }
@@ -87,12 +87,20 @@ class DepCard extends PureComponent {
     var lineSpace = 0.3;
     var lineSep = 1 + lineSpace;
     var radius = 0.5;
-    if (this.props.expanded) {
+    var depIndicatorsDY;
+    if (this.props.view === 'expanded') {
       width = 24;
       height = 2 * (imageHeight + lineSpace) + 2 * lineSep + 2 * radius;
-    } else {
+      depIndicatorsDY = height / 2;
+    } else if (this.props.view === 'collapsed') {
       width = 15;
       height = Math.max(imageHeight + 2 * radius, 3);
+      depIndicatorsDY = height / 2;
+    } else {
+      /* sync with Graph.js's depCardWidth and depCardHeight */
+      width = 50;
+      height = imageHeight + 2 * radius;
+      depIndicatorsDY = 0;
     }
     var color = Neutral;
     var style = {
@@ -151,10 +159,16 @@ class DepCard extends PureComponent {
       `Z`,
     ];
     var fullWidthClipPath = 'url(#' + this.id('_full_width') + ')';
-    if (this.props.expanded) {
+    if (this.props.view === 'list' || this.props.view === 'expanded') {
+      var commentX = rightCenter - 9;
+      var titleY = topCenter + imageHeight + lineSep;
+      if (this.props.view === 'list') {
+        commentX -= 5;  /* FIXME: width of DepIndicators, DRY this up */
+        titleY = topCenter + 1;
+      }
       title = <g>
         <title>{this.props.title}</title>
-        <text x={leftCenter} y={topCenter + imageHeight + lineSep}
+        <text x={leftCenter + 13} y={titleY}
             clipPath={fullWidthClipPath}>
           {this.props.title}
         </text>
@@ -210,12 +224,12 @@ class DepCard extends PureComponent {
         </g>
       }
       if (this.props.comments) {
-        comments = <text x={rightCenter - 9} y={bottomCenter - imageHeight + 1}>
+        comments = <text x={commentX} y={bottomCenter - imageHeight + 1}>
           🗪{this.props.comments}
         </text>
       }
       if (this.props.tasks) {
-        tasks = <text x={rightCenter - 5} y={bottomCenter - imageHeight + 1}>
+        tasks = <text x={commentX + 4} y={bottomCenter - imageHeight + 1}>
           ☑{this.props.tasksCompleted}/{this.props.tasks}
         </text>
       }
@@ -230,7 +244,7 @@ class DepCard extends PureComponent {
         } else {
           throw new Error('unrecognized status: ' + this.props.status);
         }
-        status = <text x={rightCenter - 1} y={bottomCenter - imageHeight + 1}>
+        status = <text x={commentX + 8} y={bottomCenter - imageHeight + 1}>
           <title>{this.props.status}</title>
           {statusIcon}
         </text>
@@ -277,7 +291,7 @@ class DepCard extends PureComponent {
       {tasks}
       {status}
       <DepIndicators
-        cx={right} cy={this.props.cy} dy={height/2}
+        cx={right} cy={this.props.cy} dy={depIndicatorsDY}
         parents={this.props.parents}
         blockers={this.props.blockers}
         dependencies={this.props.dependencies}

@@ -34,30 +34,36 @@ export class HomeView extends Component {
 }
 
 export class DepGraphView extends Component {
-  expanded() {
+  view() {
     return (
       this.props.location &&
-      this.props.location.query.expanded === 'true'
+      (this.props.location.query.view || 'list')
     );
   }
 
   getNodes(key, pushNodes) {
     return GetNodes(key, pushNodes, {
-      expanded: this.expanded(),
+      view: this.view(),
       getNodes: this.getNodes.bind(this),
     });
   }
 
   handleKeyPress(event) {
     var query = Object.assign({}, this.props.location.query);
-    if (event.key === 'e' && !this.expanded()) {
-      query.expanded = 'true';
+    if (event.key === 'e' && this.view() !== 'expanded') {
+      query.view = 'expanded';
       this.props.router.replace({
         pathname: this.props.location.pathname,
         query: query,
       });
-    } else if (event.key === 'c' && this.expanded()) {
-      delete query.expanded;
+    } else if (event.key === 'c' && this.view() !== 'collapsed') {
+      query.view = 'collapsed';
+      this.props.router.replace({
+        pathname: this.props.location.pathname,
+        query: query,
+      });
+    } else if (event.key === 'l' && this.view()) {
+      delete query.view;
       this.props.router.replace({
         pathname: this.props.location.pathname,
         query: query,
@@ -70,7 +76,8 @@ export class DepGraphView extends Component {
       getSize={getSize}
       getNodes={this.getNodes.bind(this)} canonicalKey={CanonicalKey}
       slugs={[this.props.params.splat]}
-      onKeyPress={this.handleKeyPress.bind(this)} />
+      onKeyPress={this.handleKeyPress.bind(this)}
+      view={this.view()} />
   }
 }
 
