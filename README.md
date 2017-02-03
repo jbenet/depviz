@@ -1,4 +1,6 @@
-<div algin="center"><img src="./logo/depviz-logo.png" /></div>
+<p align="center">
+  <img src="./logo/depviz-logo.png" />
+</p>
 
 # depviz - dependency visualizer for the web
 
